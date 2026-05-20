@@ -665,11 +665,14 @@
     <span id="tooltip-text">Peça</span>
   </div>
 
-  <header style="position: relative; width: 100%; max-width: 1250px; display: flex; flex-direction: column; align-items: center;">
+  <header style="position: relative; width: 100%; max-width: 1250px; display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;">
     <button id="theme-toggle-btn" onclick="toggleTheme()" style="position: absolute; right: 10px; top: 0; background: var(--btn-secondary-bg); border: 1px solid var(--btn-secondary-border); color: var(--text-main); padding: 8px 14px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s; font-family: inherit; font-size: 0.85rem; z-index: 10;">
       <span id="theme-icon">☀️</span> <span id="theme-text">Modo Claro</span>
     </button>
-    <h1>Vistoria de Danos Aparentes</h1>
+    <div class="logo-wrapper" style="margin-bottom: 15px; animation: slideDown 0.8s ease-out;">
+      <img src="logo.jpg" alt="Logo" style="max-height: 120px; width: auto; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.1); transition: transform 0.3s ease;">
+    </div>
+    <h1 style="margin-top: 10px;">Vistoria de Danos Aparentes</h1>
     <p>Mapeamento interativo de lataria com alta fidelidade e relatórios compartilháveis</p>
   </header>
 
@@ -695,12 +698,6 @@
     </div>
   </div>
 
-  <!-- Painel de Nome do Veículo Customizado (Adicionar Outros Veículos) -->
-  <div class="custom-vehicle-panel" id="custom-name-panel">
-    <label for="input-custom-vehicle-name" style="font-weight: 700; font-size: 0.9rem; color: var(--primary);">NOME DO VEÍCULO PERSONALIZADO:</label>
-    <input type="text" id="input-custom-vehicle-name" class="info-input" style="flex: 1; max-width: 400px;" value="Veículo Personalizado" oninput="updateCustomVehicleTitle()">
-  </div>
-
   <div class="controls-container">
     <!-- Seletor de Tipo de Veículo -->
     <div class="selector-group">
@@ -708,8 +705,7 @@
       <button class="selector-btn" id="btn-vehicle-moto" onclick="selectVehicle('moto')">🏍️ Motocicleta</button>
       <button class="selector-btn" id="btn-vehicle-truck" onclick="selectVehicle('truck')">🚛 Caminhão</button>
       <button class="selector-btn" id="btn-vehicle-bus" onclick="selectVehicle('bus')">🚌 Ônibus</button>
-      <button class="selector-btn" id="btn-vehicle-van" onclick="selectVehicle('van')">🚐 Utilitário</button>
-      <button class="selector-btn" id="btn-vehicle-custom" onclick="selectVehicle('custom')">➕ Outro / Personalizado</button>
+      <button class="selector-btn" id="btn-vehicle-van" onclick="selectVehicle('van')">🚐 Utilitário / Van</button>
     </div>
 
     <!-- Seletor de Vista/Perspectiva -->
@@ -1213,72 +1209,6 @@
           </svg>
         </div>
 
-
-        <!-- ==================== SVGs VEÍCULO CUSTOMIZADO (CHASSI GENÉRICO DE 4 PERSPECTIVAS) ==================== -->
-        <!-- Custom Lateral Esquerda -->
-        <div class="svg-container" id="container-custom-lateral-left">
-          <svg viewBox="0 0 500 200" width="100%">
-            <ellipse cx="250" cy="180" rx="200" ry="10" class="shadow-ground" />
-            <g>
-              <circle cx="120" cy="140" r="28" class="wheel-pneu" />
-              <circle cx="120" cy="140" r="16" fill="url(#radial-calota)" />
-            </g>
-            <g>
-              <circle cx="380" cy="140" r="28" class="wheel-pneu" />
-              <circle cx="380" cy="140" r="16" fill="url(#radial-calota)" />
-            </g>
-            <path class="part" id="cust-ll-roof" data-name="Teto / Parte Superior" d="M150,45 L350,45 L320,35 L180,35 Z" fill="url(#metal-car-blue)" />
-            <path class="part" id="cust-ll-windows" data-name="Lateral Superior (Área de Vidro)" d="M140,50 L360,50 L340,85 L160,85 Z" fill="url(#metal-glass)" opacity="0.75" />
-            <path class="part" id="cust-ll-body-front" data-name="Lateral Dianteira" d="M50,110 L250,110 L250,85 L80,85 Z" fill="url(#metal-car-blue)" />
-            <path class="part" id="cust-ll-body-rear" data-name="Lateral Traseira" d="M250,110 L450,110 L420,85 L250,85 Z" fill="url(#metal-car-blue)" />
-            <path class="part" id="cust-ll-sill" data-name="Saia / Parte Inferior" d="M150,145 L350,145 L350,153 L150,153 Z" fill="#1e293b" />
-          </svg>
-        </div>
-
-        <!-- Custom Lateral Direita -->
-        <div class="svg-container" id="container-custom-lateral-right">
-          <svg viewBox="0 0 500 200" width="100%">
-            <ellipse cx="250" cy="180" rx="200" ry="10" class="shadow-ground" />
-            <g>
-              <circle cx="380" cy="140" r="28" class="wheel-pneu" />
-              <circle cx="380" cy="140" r="16" fill="url(#radial-calota)" />
-            </g>
-            <g>
-              <circle cx="120" cy="140" r="28" class="wheel-pneu" />
-              <circle cx="120" cy="140" r="16" fill="url(#radial-calota)" />
-            </g>
-            <path class="part" id="cust-lr-roof" data-name="Teto / Parte Superior" d="M350,45 L150,45 L180,35 L320,35 Z" fill="url(#metal-car-blue)" />
-            <path class="part" id="cust-lr-windows" data-name="Lateral Superior (Área de Vidro)" d="M360,50 L140,50 L160,85 L340,85 Z" fill="url(#metal-glass)" opacity="0.75" />
-            <path class="part" id="cust-lr-body-front" data-name="Lateral Dianteira" d="M450,110 L250,110 L250,85 L420,85 Z" fill="url(#metal-car-blue)" />
-            <path class="part" id="cust-lr-body-rear" data-name="Lateral Traseira" d="M250,110 L50,110 L80,85 L250,85 Z" fill="url(#metal-car-blue)" />
-            <path class="part" id="cust-lr-sill" data-name="Saia / Parte Inferior" d="M350,145 L150,145 L150,153 L350,153 Z" fill="#1e293b" />
-          </svg>
-        </div>
-
-        <!-- Custom Frontal -->
-        <div class="svg-container" id="container-custom-frontal">
-          <svg viewBox="0 0 400 300" width="100%">
-            <ellipse cx="200" cy="275" rx="140" ry="10" class="shadow-ground" />
-            <path class="part" id="cust-f-glass" data-name="Vidro Frontal / Parabrisa" d="M90,65 L310,65 L280,130 L120,130 Z" fill="url(#metal-glass)" opacity="0.8" />
-            <path class="part" id="cust-f-top" data-name="Frente Superior" d="M80,130 L320,130 L340,195 L60,195 Z" fill="url(#metal-car-blue)" />
-            <path class="part" id="cust-f-grille" data-name="Grade / Para-choque" d="M50,195 L350,195 L335,260 L65,260 Z" fill="#1e293b" />
-            <rect class="part" id="cust-f-light-left" data-name="Farol Esquerdo" x="65" y="200" width="40" height="20" rx="3" class="glass-light" />
-            <rect class="part" id="cust-f-light-right" data-name="Farol Direito" x="295" y="200" width="40" height="20" rx="3" class="glass-light" />
-          </svg>
-        </div>
-
-        <!-- Custom Traseira -->
-        <div class="svg-container" id="container-custom-traseira">
-          <svg viewBox="0 0 400 300" width="100%">
-            <ellipse cx="200" cy="275" rx="140" ry="10" class="shadow-ground" />
-            <path class="part" id="cust-r-glass" data-name="Vidro Traseiro" d="M90,65 L310,65 L280,130 L120,130 Z" fill="url(#metal-glass)" opacity="0.8" />
-            <path class="part" id="cust-r-top" data-name="Traseira Superior" d="M80,130 L320,130 L340,210 L60,210 Z" fill="url(#metal-car-blue)" />
-            <path class="part" id="cust-r-bottom" data-name="Traseira Inferior" d="M50,210 L350,210 L335,265 L65,265 Z" fill="#1e293b" />
-            <rect class="part" id="cust-r-light-left" data-name="Lanterna Esquerda" x="60" y="175" width="45" height="22" rx="4" class="glass-light-red" />
-            <rect class="part" id="cust-r-light-right" data-name="Lanterna Direita" x="295" y="175" width="45" height="22" rx="4" class="glass-light-red" />
-          </svg>
-        </div>
-
       </div>
 
       <div class="hint-bar" id="hint-text">
@@ -1299,41 +1229,27 @@
 
     <!-- Bloco Direito: Lógica de Registro e Lista de Danos -->
     <div class="glass-card">
-      <!-- Formulário de Registro de Avaria -->
-      <div class="damage-form-panel" id="form-panel">
-        <h3 style="margin-bottom: 5px;">Avaria Detectada</h3>
-        <p style="font-size: 0.9rem; margin-bottom: 15px;">
-          Peça: <span id="label-selected-part" style="font-weight: 700; color: var(--primary);">-</span>
-        </p>
-
-        <div class="form-group">
-          <label for="input-damage-type">Tipo de Avaria</label>
-          <select id="input-damage-type" class="form-control">
-            <option value="scratch">Arranhão / Risco</option>
-            <option value="dent">Amassado</option>
-            <option value="crack">Trinca / Rachadura</option>
-            <option value="broken">Quebrado / Ausente</option>
-            <option value="rust">Corrosão / Ferrugem</option>
-          </select>
+      <!-- Formulário de Registro de Avaria (Ultra Compacto) -->
+      <div class="damage-form-panel" id="form-panel" style="padding: 15px; border-radius: 12px; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 4px;">
+          <h4 style="margin: 0; font-size: 1rem;">⚙️ Avaria Rápida</h4>
+          <span id="label-selected-part" style="font-weight: 700; font-size: 0.95rem; color: var(--primary);">-</span>
         </div>
 
-        <div class="form-group">
-          <label>Gravidade / Severidade</label>
-          <div class="severity-options">
-            <button type="button" class="severity-btn active" data-severity="low" onclick="setSeverity('low')">Leve</button>
-            <button type="button" class="severity-btn" data-severity="medium" onclick="setSeverity('medium')">Média</button>
-            <button type="button" class="severity-btn" data-severity="high" onclick="setSeverity('high')">Severa</button>
-          </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <button type="button" class="btn" style="background: var(--severity-low); color: #000; font-size: 0.82rem; padding: 10px 3px; font-weight: 700; border-radius: 8px;" onclick="quickRegisterDamage('scratch', 'low', 'Arranhado')">
+            🟨 Arranhado
+          </button>
+          <button type="button" class="btn" style="background: var(--severity-medium); color: #fff; font-size: 0.82rem; padding: 10px 3px; font-weight: 700; border-radius: 8px;" onclick="quickRegisterDamage('dent', 'medium', 'Amassado')">
+            🟧 Amassado
+          </button>
+          <button type="button" class="btn" style="background: var(--severity-high); color: #fff; font-size: 0.82rem; padding: 10px 3px; font-weight: 700; border-radius: 8px;" onclick="quickRegisterDamage('broken', 'high', 'Quebrado')">
+            🟥 Quebrado
+          </button>
         </div>
 
-        <div class="form-group">
-          <label for="input-damage-notes">Observações do Vistoriador</label>
-          <textarea id="input-damage-notes" class="form-control" rows="2" placeholder="Ex: Detalhes específicos da avaria..."></textarea>
-        </div>
-
-        <div class="action-row">
-          <button class="btn btn-secondary" onclick="cancelRegistration()">Cancelar</button>
-          <button class="btn btn-primary" onclick="saveDamage()">Salvar Registro</button>
+        <div class="form-group" style="margin-top: 5px;">
+          <input type="text" id="input-damage-notes" class="form-control" style="font-size: 0.85rem; padding: 8px 10px;" placeholder="Obs. adicionais (opcional)..." oninput="updateDamageNotes()">
         </div>
       </div>
 
@@ -1459,22 +1375,22 @@
           
           document.getElementById('label-selected-part').innerText = selectedPartName;
           document.getElementById('form-panel').classList.add('active');
-          document.getElementById('hint-text').innerText = `Inserindo dano na peça: ${selectedPartName}`;
+          document.getElementById('hint-text').innerText = `Status da peça: ${selectedPartName}`;
+
+          const existing = registeredDamages.find(d => d.partId === selectedPartId && d.vehicle === currentVehicle);
+          
+          let speakMsg = '';
+          if (existing) {
+            document.getElementById('input-damage-notes').value = existing.notes || '';
+            speakMsg = `${selectedPartName} ${existing.typeName}`;
+          } else {
+            document.getElementById('input-damage-notes').value = '';
+            speakMsg = `${selectedPartName} Sem avaria`;
+          }
 
           const ttsActive = document.getElementById('tts-active').checked;
           if (ttsActive) {
-            speakText(`Peça selecionada: ${selectedPartName}`);
-          }
-
-          const existing = registeredDamages.find(d => d.partId === selectedPartId && d.vehicle === currentVehicle);
-          if (existing) {
-            document.getElementById('input-damage-type').value = existing.type;
-            setSeverity(existing.severity);
-            document.getElementById('input-damage-notes').value = existing.notes;
-          } else {
-            document.getElementById('input-damage-type').value = 'scratch';
-            setSeverity('low');
-            document.getElementById('input-damage-notes').value = '';
+            speakText(speakMsg);
           }
         };
       });
@@ -1505,7 +1421,12 @@
             lastHoveredPartId = this.id;
             clearTimeout(hoverSpeechTimeout);
             hoverSpeechTimeout = setTimeout(() => {
-              speakText(name);
+              const existing = registeredDamages.find(d => d.partId === this.id && d.vehicle === currentVehicle);
+              if (existing) {
+                speakText(`${name}: ${existing.typeName}`);
+              } else {
+                speakText(name);
+              }
             }, 150);
           }
         });
@@ -1534,45 +1455,50 @@
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'pt-BR';
-        utterance.rate = 1.15;
+        utterance.rate = 1.02; // Taxa de fala um pouco mais natural
+        utterance.pitch = 1.0;
+
+        const voices = window.speechSynthesis.getVoices();
+        
+        // Priorizar vozes "Natural" (Edge) e "Google" (Chrome) em pt-BR
+        let selectedVoice = voices.find(v => v.lang === 'pt-BR' && v.name.toLowerCase().includes('natural'));
+        if (!selectedVoice) {
+          selectedVoice = voices.find(v => v.lang === 'pt-BR' && v.name.toLowerCase().includes('google'));
+        }
+        if (!selectedVoice) {
+          selectedVoice = voices.find(v => v.lang === 'pt-BR' && !v.name.toLowerCase().includes('maria'));
+        }
+        if (!selectedVoice) {
+          selectedVoice = voices.find(v => v.lang === 'pt-BR' || v.lang.startsWith('pt'));
+        }
+
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
         window.speechSynthesis.speak(utterance);
       }
+    }
+
+    // Garantir que as vozes carreguem de forma assíncrona nos navegadores
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
     }
 
     function selectVehicle(type) {
       currentVehicle = type;
       
-      const buttons = ['car', 'moto', 'truck', 'bus', 'van', 'custom'];
+      const buttons = ['car', 'moto', 'truck', 'bus', 'van'];
       buttons.forEach(b => {
-        document.getElementById(`btn-vehicle-${b}`).classList.toggle('active', type === b);
+        const btn = document.getElementById(`btn-vehicle-${b}`);
+        if (btn) btn.classList.toggle('active', type === b);
       });
       
-      const vehicleIcons = { car: '🚗', moto: '🏍️', truck: '🚛', bus: '🚌', van: '🚐', custom: '➕' };
+      const vehicleIcons = { car: '🚗', moto: '🏍️', truck: '🚛', bus: '🚌', van: '🚐' };
       document.getElementById('vehicle-icon-indicator').innerText = vehicleIcons[type];
 
-      // Exibir ou ocultar o painel de veículo personalizado
-      const customPanel = document.getElementById('custom-name-panel');
-      if (type === 'custom') {
-        customPanel.classList.add('active');
-        updateCustomVehicleTitle();
-      } else {
-        customPanel.classList.remove('active');
-      }
-
       selectView('lateral-left');
-    }
-
-    function updateCustomVehicleTitle() {
-      if (currentVehicle === 'custom') {
-        const customName = document.getElementById('input-custom-vehicle-name').value.trim() || 'Veículo Personalizado';
-        const viewLabels = {
-          'lateral-left': 'Lateral Esquerda',
-          'lateral-right': 'Lateral Direita',
-          'frontal': 'Frontal',
-          'traseira': 'Traseira'
-        };
-        document.getElementById('vehicle-view-title').innerText = `${customName} - ${viewLabels[currentView]}`;
-      }
     }
 
     function selectView(view) {
@@ -1590,11 +1516,7 @@
         'traseira': 'Traseira'
       };
 
-      if (currentVehicle === 'custom') {
-        updateCustomVehicleTitle();
-      } else {
-        document.getElementById('vehicle-view-title').innerText = `${vehicleLabels[currentVehicle]} - ${viewLabels[view]}`;
-      }
+      document.getElementById('vehicle-view-title').innerText = `${vehicleLabels[currentVehicle]} - ${viewLabels[view]}`;
 
       document.querySelectorAll('.svg-container').forEach(container => {
         container.classList.remove('active');
@@ -1611,19 +1533,29 @@
       applySavedDamagesColors();
     }
 
-    function setSeverity(sev) {
-      selectedSeverity = sev;
-      document.querySelectorAll('.severity-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-severity') === sev);
-      });
-    }
-
-    function saveDamage() {
+    function quickRegisterDamage(typeVal, severityVal, typeName) {
       if (!selectedPartId) return;
 
-      const typeSelect = document.getElementById('input-damage-type');
-      const typeVal = typeSelect.value;
-      const typeName = typeSelect.options[typeSelect.selectedIndex].text;
+      const existingIndex = registeredDamages.findIndex(d => d.partId === selectedPartId && d.vehicle === currentVehicle);
+      
+      // Se clicar no MESMO tipo de dano que já está registrado na peça, ele remove (toggle)
+      if (existingIndex !== -1 && registeredDamages[existingIndex].type === typeVal) {
+        registeredDamages = registeredDamages.filter(d => !(d.partId === selectedPartId && d.vehicle === currentVehicle));
+        localStorage.setItem('saved_damages', JSON.stringify(registeredDamages));
+        
+        const element = document.getElementById(selectedPartId);
+        if (element) {
+          element.classList.remove('damage-low', 'damage-medium', 'damage-high');
+          element.classList.add('selected');
+        }
+        
+        speakText(`${selectedPartName}: Sem avaria`);
+        document.getElementById('input-damage-notes').value = '';
+        renderDamagesList();
+        updateStats();
+        return;
+      }
+
       const notes = document.getElementById('input-damage-notes').value.trim();
 
       const newDamage = {
@@ -1634,7 +1566,7 @@
         partName: selectedPartName,
         type: typeVal,
         typeName: typeName,
-        severity: selectedSeverity,
+        severity: severityVal,
         notes: notes
       };
 
@@ -1646,14 +1578,28 @@
       const element = document.getElementById(selectedPartId);
       if (element) {
         element.classList.remove('selected', 'damage-low', 'damage-medium', 'damage-high');
-        element.classList.add(`damage-${selectedSeverity}`);
+        element.classList.add(`damage-${severityVal}`);
       }
 
-      speakText(`Dano de ${typeName} registrado na peça ${selectedPartName}`);
+      speakText(`${selectedPartName} ${typeName}`);
 
-      cancelRegistration();
       renderDamagesList();
       updateStats();
+
+      if (element) {
+        element.classList.add('selected');
+      }
+    }
+
+    function updateDamageNotes() {
+      if (!selectedPartId) return;
+      const notes = document.getElementById('input-damage-notes').value.trim();
+      const existing = registeredDamages.find(d => d.partId === selectedPartId && d.vehicle === currentVehicle);
+      if (existing) {
+        existing.notes = notes;
+        localStorage.setItem('saved_damages', JSON.stringify(registeredDamages));
+        renderDamagesList();
+      }
     }
 
     function cancelRegistration() {
@@ -1662,6 +1608,7 @@
       document.querySelectorAll('.part').forEach(p => p.classList.remove('selected'));
       document.getElementById('form-panel').classList.remove('active');
       document.getElementById('hint-text').innerText = 'Mova o mouse sobre o veículo para inspecionar e clique na peça para avaria.';
+      document.getElementById('input-damage-notes').value = '';
     }
 
     function deleteDamage(id, partId, partName) {
