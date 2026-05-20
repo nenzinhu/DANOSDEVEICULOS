@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vistoria Interativa de Danos Veiculares - Pro Edition</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at top, #1e293b, #0f172a, #020617);
+      --card-bg: rgba(30, 41, 59, 0.65);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --glass-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.45);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      
+      --primary: #3b82f6;
+      --primary-hover: #1d4ed8;
+      --primary-glow: rgba(59, 130, 246, 0.35);
+      
+      --color-clean: #475569;
+      --color-hover: #64748b;
+      
+      --severity-low: #eab308;
+      --severity-medium: #f97316;
+      --severity-high: #ef4444;
+      
+      --whatsapp-color: #22c55e;
+      --whatsapp-hover: #16a34a;
+
+      /* Variáveis de Tema Escuro por Padrão */
+      --input-bg: rgba(15, 23, 42, 0.65);
+      --input-border: rgba(255, 255, 255, 0.1);
+      --input-color: #fff;
+      --panel-bg: rgba(15, 23, 42, 0.4);
+      --panel-border: rgba(255, 255, 255, 0.03);
+      --tooltip-bg: rgba(15, 23, 42, 0.85);
+      --tooltip-border: rgba(255, 255, 255, 0.18);
+      --tooltip-color: #fff;
+      --part-stroke: #090d16;
+      --btn-secondary-bg: rgba(255, 255, 255, 0.05);
+      --btn-secondary-border: rgba(255, 255, 255, 0.1);
+      --btn-secondary-hover: rgba(255, 255, 255, 0.1);
+      --scrollbar-track: rgba(0, 0, 0, 0.1);
+      --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+    }
+
+    body.light-mode {
+      --bg-gradient: radial-gradient(circle at top, #f8fafc, #f1f5f9, #cbd5e1);
+      --card-bg: rgba(255, 255, 255, 0.75);
+      --card-border: rgba(15, 23, 42, 0.08);
+      --glass-shadow: 0 12px 40px 0 rgba(15, 23, 42, 0.08);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-glow: rgba(37, 99, 235, 0.2);
+      
+      --color-clean: #cbd5e1;
+      --color-hover: #94a3b8;
+
+      /* Variáveis de Tema Claro */
+      --input-bg: rgba(255, 255, 255, 0.95);
+      --input-border: rgba(15, 23, 42, 0.15);
+      --input-color: #0f172a;
+      --panel-bg: rgba(15, 23, 42, 0.03);
+      --panel-border: rgba(15, 23, 42, 0.06);
+      --tooltip-bg: rgba(255, 255, 255, 0.95);
+      --tooltip-border: rgba(15, 23, 42, 0.15);
+      --tooltip-color: #0f172a;
+      --part-stroke: #94a3b8;
+      --btn-secondary-bg: rgba(15, 23, 42, 0.05);
+      --btn-secondary-border: rgba(15, 23, 42, 0.1);
+      --btn-secondary-hover: rgba(15, 23, 42, 0.08);
+      --scrollbar-track: rgba(0, 0, 0, 0.05);
+      --scrollbar-thumb: rgba(15, 23, 42, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      padding: 25px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #60a5fa, #3b82f6, #1d4ed8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    /* Grid de Dados da Vistoria (Novo Card) */
+    .owner-info-card {
+      width: 100%;
+      max-width: 1250px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 18px 25px;
+      margin-bottom: 20px;
+      box-shadow: var(--glass-shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: slideDown 0.5s ease-out;
+      transition: background 0.3s, border 0.3s, box-shadow 0.3s;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    @media (max-width: 850px) {
+      .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 480px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .info-group label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-input {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--input-color);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .info-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 6px rgba(59, 130, 246, 0.25);
+    }
+
+    /* Painel de Nome do Veículo Customizado */
+    .custom-vehicle-panel {
+      display: none;
+      width: 100%;
+      max-width: 1250px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 12px;
+      padding: 12px 20px;
+      margin-bottom: 20px;
+      animation: fadeIn 0.4s ease;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .custom-vehicle-panel.active {
+      display: flex;
+    }
+
+    /* Controles de Seleção de Veículo e Perspectiva */
+    .controls-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 1250px;
+      animation: slideDown 0.6s ease-out;
+    }
+
+    .selector-group {
+      display: flex;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 5px;
+      gap: 5px;
+      backdrop-filter: blur(10px);
+      flex-wrap: wrap;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .selector-btn {
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .selector-btn:hover {
+      color: var(--text-main);
+    }
+
+    .selector-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    /* Estatísticas rápidas */
+    .stats-bar {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 5px;
+      animation: fadeIn 0.8s ease-out;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .stat-badge {
+      background: var(--panel-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.3s, border 0.3s;
+    }
+
+    /* Layout da Vistoria */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 25px;
+      width: 100%;
+      max-width: 1250px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @media (max-width: 980px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cartões Glassmorphism */
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s, border 0.3s;
+      position: relative;
+    }
+
+    .glass-card:hover {
+      box-shadow: 0 16px 50px 0 rgba(0, 0, 0, 0.55);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    /* Visualizador SVG */
+    .visualizer-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 420px;
+      position: relative;
+      background: var(--panel-bg);
+      border-radius: 16px;
+      border: 1px solid var(--panel-border);
+      padding: 15px;
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .svg-container {
+      width: 100%;
+      max-width: 580px;
+      display: none;
+      animation: scaleUp 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+    }
+
+    .svg-container.active {
+      display: block;
+    }
+
+    /* Estilização das Peças - 90% Realista */
+    .part {
+      fill: var(--color-clean);
+      stroke: var(--part-stroke);
+      stroke-width: 2.2;
+      stroke-linejoin: round;
+      cursor: pointer;
+      transition: fill 0.25s ease, filter 0.25s ease, stroke 0.25s ease;
+    }
+
+    .part:hover {
+      fill: var(--color-hover);
+      filter: brightness(1.2) drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
+    }
+
+    .part.selected {
+      fill: var(--primary) !important;
+      stroke: #fff;
+      stroke-width: 2.8;
+      filter: drop-shadow(0 0 8px var(--primary));
+    }
+
+    /* Classes de Danos no SVG */
+    .part.damage-low { fill: var(--severity-low) !important; filter: drop-shadow(0 0 4px rgba(234, 179, 8, 0.6)); }
+    .part.damage-medium { fill: var(--severity-medium) !important; filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.6)); }
+    .part.damage-high { fill: var(--severity-high) !important; filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.6)); }
+
+    /* Detalhes de Background de Veículos */
+    .wheel-pneu { fill: #121824; stroke: #020617; stroke-width: 2.5; pointer-events: none; }
+    .wheel-aro { fill: #64748b; stroke: #475569; stroke-width: 1; pointer-events: none; }
+    .wheel-calota { fill: #e2e8f0; stroke: #cbd5e1; stroke-width: 0.5; pointer-events: none; }
+    .brake-caliper { fill: #ef4444; pointer-events: none; }
+    
+    .glass-light { fill: #fef08a; opacity: 0.85; stroke: #eab308; stroke-width: 1.5; pointer-events: none; }
+    .glass-light-red { fill: #f87171; opacity: 0.85; stroke: #dc2626; stroke-width: 1.5; pointer-events: none; }
+
+    .aesthetic-line { fill: none; stroke: rgba(15, 23, 42, 0.65); stroke-width: 1.8; pointer-events: none; }
+    .shadow-ground { fill: rgba(2, 6, 23, 0.55); filter: blur(8px); pointer-events: none; }
+
+    /* Dica de interação */
+    .hint-bar {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-align: center;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 8px 16px;
+      border-radius: 30px;
+    }
+
+    /* Painel do Formulário de Registro */
+    .damage-form-panel {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 20px;
+      background: var(--panel-bg);
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid var(--panel-border);
+      animation: fadeIn 0.3s ease;
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .damage-form-panel.active {
+      display: flex;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-control {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--input-color);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    .severity-options {
+      display: flex;
+      gap: 8px;
+    }
+
+    .severity-btn {
+      flex: 1;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text-muted);
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .severity-btn[data-severity="low"]:hover, .severity-btn[data-severity="low"].active {
+      background: var(--severity-low);
+      color: #000;
+      border-color: var(--severity-low);
+    }
+
+    .severity-btn[data-severity="medium"]:hover, .severity-btn[data-severity="medium"].active {
+      background: var(--severity-medium);
+      color: #fff;
+      border-color: var(--severity-medium);
+    }
+
+    .severity-btn[data-severity="high"]:hover, .severity-btn[data-severity="high"].active {
+      background: var(--severity-high);
+      color: #fff;
+      border-color: var(--severity-high);
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px var(--primary-glow); }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--btn-secondary-bg); color: var(--text-main); border: 1px solid var(--btn-secondary-border); }
+    .btn-secondary:hover { background: var(--btn-secondary-hover); }
+
+    /* Lista de danos registrados */
+    .damage-list-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 290px;
+      padding-right: 5px;
+      margin-bottom: 20px;
+    }
+
+    /* Custom Scrollbar */
+    .damage-list-wrapper::-webkit-scrollbar { width: 6px; }
+    .damage-list-wrapper::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+    .damage-list-wrapper::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 30px 0;
+    }
+
+    .damage-card-item {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 5px solid transparent;
+      animation: slideIn 0.3s ease-out;
+      transition: background 0.3s, border 0.3s;
+    }
+
+    .damage-card-item[data-severity="low"] { border-left-color: var(--severity-low); }
+    .damage-card-item[data-severity="medium"] { border-left-color: var(--severity-medium); }
+    .damage-card-item[data-severity="high"] { border-left-color: var(--severity-high); }
+
+    .damage-card-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+    .damage-card-info p { font-size: 0.8rem; color: var(--text-muted); }
+    .damage-card-info span.badge { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 1px 7px; border-radius: 10px; margin-top: 4px; }
+
+    .badge.low { background: rgba(234, 179, 8, 0.15); color: var(--severity-low); }
+    .badge.medium { background: rgba(249, 115, 22, 0.15); color: var(--severity-medium); }
+    .badge.high { background: rgba(239, 68, 68, 0.15); color: var(--severity-high); }
+
+    .delete-btn {
+      background: transparent;
+      border: none;
+      color: #f43f5e;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .delete-btn:hover { background: rgba(244, 63, 94, 0.1); }
+
+    /* Barra de Ações do Relatório (Exportar) */
+    .report-actions-panel {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-whatsapp {
+      background: var(--whatsapp-color);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    }
+    .btn-whatsapp:hover {
+      background: var(--whatsapp-hover);
+    }
+
+    .export-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* TTS & Hover Controller */
+    .tts-toggle-box {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 12px;
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tts-checkbox {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    /* Tooltip Flutuante Personalizado */
+    #custom-tooltip {
+      position: fixed;
+      display: none;
+      background: var(--tooltip-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--tooltip-border);
+      color: var(--tooltip-color);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      pointer-events: none;
+      z-index: 9999;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      transform: translate(15px, 15px);
+      transition: opacity 0.1s ease, background 0.3s, border 0.3s, color 0.3s;
+      opacity: 0;
+    }
+
+    #custom-tooltip.visible {
+      opacity: 1;
+    }
+
+    #custom-tooltip span.tooltip-view {
+      font-size: 0.7rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* Animações */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes scaleUp { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- Tooltip Flutuante -->
+  <div id="custom-tooltip">
+    <span class="tooltip-view" id="tooltip-view-label">VISTA DETALHADA</span>
+    <span id="tooltip-text">Peça</span>
+  </div>
+
+  <header style="position: relative; width: 100%; max-width: 1250px; display: flex; flex-direction: column; align-items: center;">
+    <button id="theme-toggle-btn" onclick="toggleTheme()" style="position: absolute; right: 10px; top: 0; background: var(--btn-secondary-bg); border: 1px solid var(--btn-secondary-border); color: var(--text-main); padding: 8px 14px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.3s; font-family: inherit; font-size: 0.85rem; z-index: 10;">
+      <span id="theme-icon">☀️</span> <span id="theme-text">Modo Claro</span>
+    </button>
+    <h1>Vistoria de Danos Aparentes</h1>
+    <p>Mapeamento interativo de lataria com alta fidelidade e relatórios compartilháveis</p>
+  </header>
+
+  <!-- Dados Iniciais da Vistoria (Novidade) -->
+  <div class="owner-info-card">
+    <div class="info-grid">
+      <div class="info-group">
+        <label for="info-owner">Proprietário / Cliente</label>
+        <input type="text" id="info-owner" class="info-input" placeholder="Ex: João Silva">
+      </div>
+      <div class="info-group">
+        <label for="info-phone">Telefone (com DDD)</label>
+        <input type="text" id="info-phone" class="info-input" placeholder="Ex: 11999999999">
+      </div>
+      <div class="info-group">
+        <label for="info-brand">Marca / Modelo</label>
+        <input type="text" id="info-brand" class="info-input" placeholder="Ex: Toyota Civic">
+      </div>
+      <div class="info-group">
+        <label for="info-plate">Placa do Veículo</label>
+        <input type="text" id="info-plate" class="info-input" placeholder="Ex: ABC1D23">
+      </div>
+    </div>
+  </div>
+
+  <!-- Painel de Nome do Veículo Customizado (Adicionar Outros Veículos) -->
+  <div class="custom-vehicle-panel" id="custom-name-panel">
+    <label for="input-custom-vehicle-name" style="font-weight: 700; font-size: 0.9rem; color: var(--primary);">NOME DO VEÍCULO PERSONALIZADO:</label>
+    <input type="text" id="input-custom-vehicle-name" class="info-input" style="flex: 1; max-width: 400px;" value="Veículo Personalizado" oninput="updateCustomVehicleTitle()">
+  </div>
+
+  <div class="controls-container">
+    <!-- Seletor de Tipo de Veículo -->
+    <div class="selector-group">
+      <button class="selector-btn active" id="btn-vehicle-car" onclick="selectVehicle('car')">🚗 Automóvel</button>
+      <button class="selector-btn" id="btn-vehicle-moto" onclick="selectVehicle('moto')">🏍️ Motocicleta</button>
+      <button class="selector-btn" id="btn-vehicle-truck" onclick="selectVehicle('truck')">🚛 Caminhão</button>
+      <button class="selector-btn" id="btn-vehicle-bus" onclick="selectVehicle('bus')">🚌 Ônibus</button>
+      <button class="selector-btn" id="btn-vehicle-van" onclick="selectVehicle('van')">🚐 Utilitário</button>
+      <button class="selector-btn" id="btn-vehicle-custom" onclick="selectVehicle('custom')">➕ Outro / Personalizado</button>
+    </div>
+
+    <!-- Seletor de Vista/Perspectiva -->
+    <div class="selector-group" id="perspective-selector">
+      <button class="selector-btn active" data-view="lateral-left" onclick="selectView('lateral-left')">Lateral Esquerda</button>
+      <button class="selector-btn" data-view="lateral-right" onclick="selectView('lateral-right')">Lateral Direita</button>
+      <button class="selector-btn" data-view="frontal" onclick="selectView('frontal')">Frontal</button>
+      <button class="selector-btn" data-view="traseira" onclick="selectView('traseira')">Traseira</button>
+    </div>
+
+    <!-- Estatísticas rápidas de avarias -->
+    <div class="stats-bar">
+      <div class="stat-badge" style="color: var(--severity-low)">⚠️ <span id="stat-low">0</span> Leves</div>
+      <div class="stat-badge" style="color: var(--severity-medium)">⚠️ <span id="stat-medium">0</span> Médias</div>
+      <div class="stat-badge" style="color: var(--severity-high)">🚨 <span id="stat-high">0</span> Severas</div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <!-- Bloco Esquerdo: Visualização do Veículo -->
+    <div class="glass-card">
+      <div class="card-title">
+        <span id="vehicle-icon-indicator">🚗</span>
+        <span id="vehicle-view-title">Automóvel - Lateral Esquerda</span>
+      </div>
+
+      <div class="visualizer-wrapper">
+        <!-- Definições de Gradientes e Filtros de Realismo -->
+        <svg width="0" height="0" style="position: absolute;">
+          <defs>
+            <linearGradient id="metal-car-blue" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#475569" />
+              <stop offset="45%" stop-color="#64748b" />
+              <stop offset="55%" stop-color="#475569" />
+              <stop offset="100%" stop-color="#334155" />
+            </linearGradient>
+            <linearGradient id="metal-moto-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6" />
+              <stop offset="50%" stop-color="#1d4ed8" />
+              <stop offset="100%" stop-color="#1e1b4b" />
+            </linearGradient>
+            <linearGradient id="metal-glass" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7dd3fc" />
+              <stop offset="40%" stop-color="#e0f2fe" />
+              <stop offset="60%" stop-color="#38bdf8" />
+              <stop offset="100%" stop-color="#0284c7" />
+            </linearGradient>
+            <linearGradient id="grad-metal" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#e2e8f0" />
+              <stop offset="50%" stop-color="#94a3b8" />
+              <stop offset="100%" stop-color="#475569" />
+            </linearGradient>
+            <radialGradient id="radial-wheel" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#334155" />
+              <stop offset="75%" stop-color="#0f172a" />
+              <stop offset="100%" stop-color="#020617" />
+            </radialGradient>
+            <radialGradient id="radial-calota" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#f8fafc" />
+              <stop offset="70%" stop-color="#cbd5e1" />
+              <stop offset="100%" stop-color="#64748b" />
+            </radialGradient>
+            <filter id="shadow-filter" x="-10%" y="-10%" width="120%" height="120%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+            </filter>
+          </defs>
+        </svg>
+
+        <!-- ==================== SVGs CARRO ==================== -->
+        <!-- Carro Lateral Esquerda -->
+        <div class="svg-container active" id="container-car-lateral-left">
+          <svg viewBox="0 0 520 220" width="100%">
+            <ellipse cx="260" cy="188" rx="220" ry="12" class="shadow-ground" />
+            <g>
+              <circle cx="110" cy="155" r="34" class="wheel-pneu" />
+              <circle cx="110" cy="155" r="23" class="wheel-aro" />
+              <rect x="110" y="137" width="10" height="15" class="brake-caliper" transform="rotate(30, 110, 155)" />
+              <circle cx="110" cy="155" r="20" fill="url(#radial-calota)" />
+              <path d="M110,135 L110,175 M90,155 L130,155 M96,141 L124,169 M96,169 L124,141" stroke="#475569" stroke-width="1.5" />
+              <circle cx="110" cy="155" r="5" fill="#334155" />
+            </g>
+            <g>
+              <circle cx="410" cy="155" r="34" class="wheel-pneu" />
+              <circle cx="410" cy="155" r="23" class="wheel-aro" />
+              <rect x="410" y="137" width="10" height="15" class="brake-caliper" transform="rotate(30, 410, 155)" />
+              <circle cx="410" cy="155" r="20" fill="url(#radial-calota)" />
+              <path d="M410,135 L410,175 M390,155 L430,155 M396,141 L424,169 M396,169 L424,141" stroke="#475569" stroke-width="1.5" />
+              <circle cx="410" cy="155" r="5" fill="#334155" />
+            </g>
+            <path class="part" id="car-ll-glass-front" data-name="Vidro Dianteiro Esquerdo" d="M190,80 L245,45 L320,45 L320,80 Z" fill="url(#metal-glass)" opacity="0.75" />
+            <path class="part" id="car-ll-glass-rear" data-name="Vidro Traseiro Esquerdo" d="M325,45 L380,45 L420,80 L325,80 Z" fill="url(#metal-glass)" opacity="0.75" />
+            <rect x="320" y="45" width="5" height="35" fill="#0f172a" pointer-events="none" />
+            <path class="part" id="car-ll-fender-front" data-name="Para-lama Dianteiro Esquerdo" d="M35,120 L160,120 L160,80 L60,80 Q35,95 35,120 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-ll-door-front" data-name="Porta Dianteira Esquerda" d="M160,80 L275,80 L275,160 L160,160 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-ll-door-rear" data-name="Porta Traseira Esquerda" d="M275,80 L380,80 L380,160 L275,160 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-ll-fender-rear" data-name="Para-lama Traseiro Esquerdo" d="M380,80 L480,80 Q485,105 470,120 L380,120 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-ll-roof" data-name="Teto" d="M230,45 L390,45 L380,35 L245,35 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-ll-sill" data-name="Soleira Esquerda" d="M160,160 L380,160 L380,168 L160,168 Z" fill="#1e293b" />
+            <path class="part" id="car-ll-mirror" data-name="Retrovisor Esquerdo" d="M162,77 C152,77 147,70 152,65 C157,60 165,68 162,77 Z" fill="#1e293b" />
+            <path class="aesthetic-line" d="M160,80 L160,160 M275,80 L275,160 M380,80 L380,160" />
+            <rect x="250" y="90" width="16" height="5" rx="2.5" fill="#0f172a" pointer-events="none" />
+            <rect x="290" y="90" width="16" height="5" rx="2.5" fill="#0f172a" pointer-events="none" />
+          </svg>
+        </div>
+
+        <!-- Carro Lateral Direita -->
+        <div class="svg-container" id="container-car-lateral-right">
+          <svg viewBox="0 0 520 220" width="100%">
+            <ellipse cx="260" cy="188" rx="220" ry="12" class="shadow-ground" />
+            <g>
+              <circle cx="110" cy="155" r="34" class="wheel-pneu" />
+              <circle cx="110" cy="155" r="23" class="wheel-aro" />
+              <rect x="110" y="137" width="10" height="15" class="brake-caliper" transform="rotate(30, 110, 155)" />
+              <circle cx="110" cy="155" r="20" fill="url(#radial-calota)" />
+              <path d="M110,135 L110,175 M90,155 L130,155 M96,141 L124,169 M96,169 L124,141" stroke="#475569" stroke-width="1.5" />
+              <circle cx="110" cy="155" r="5" fill="#334155" />
+            </g>
+            <g>
+              <circle cx="410" cy="155" r="34" class="wheel-pneu" />
+              <circle cx="410" cy="155" r="23" class="wheel-aro" />
+              <rect x="410" y="137" width="10" height="15" class="brake-caliper" transform="rotate(30, 410, 155)" />
+              <circle cx="410" cy="155" r="20" fill="url(#radial-calota)" />
+              <path d="M410,135 L410,175 M390,155 L430,155 M396,141 L424,169 M396,169 L424,141" stroke="#475569" stroke-width="1.5" />
+              <circle cx="410" cy="155" r="5" fill="#334155" />
+            </g>
+            <path class="part" id="car-lr-glass-front" data-name="Vidro Dianteiro Direito" d="M330,80 L275,45 L200,45 L200,80 Z" fill="url(#metal-glass)" opacity="0.75" />
+            <path class="part" id="car-lr-glass-rear" data-name="Vidro Traseiro Direito" d="M195,45 L140,45 L100,80 L195,80 Z" fill="url(#metal-glass)" opacity="0.75" />
+            <rect x="195" y="45" width="5" height="35" fill="#0f172a" pointer-events="none" />
+            <path class="part" id="car-lr-fender-front" data-name="Para-lama Dianteiro Direito" d="M485,120 L360,120 L360,80 L460,80 Q485,95 485,120 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-lr-door-front" data-name="Porta Dianteira Direita" d="M360,80 L245,80 L245,160 L360,160 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-lr-door-rear" data-name="Porta Traseira Direita" d="M245,80 L140,80 L140,160 L245,160 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-lr-fender-rear" data-name="Para-lama Traseiro Direito" d="M140,80 L40,80 Q35,105 50,120 L140,120 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-lr-roof" data-name="Teto" d="M290,45 L130,45 L140,35 L275,35 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-lr-sill" data-name="Soleira Direita" d="M360,160 L140,160 L140,168 L360,168 Z" fill="#1e293b" />
+            <path class="part" id="car-lr-mirror" data-name="Retrovisor Direito" d="M358,77 C368,77 373,70 368,65 C363,60 355,68 358,77 Z" fill="#1e293b" />
+            <path class="aesthetic-line" d="M360,80 L360,160 M245,80 L245,160 M140,80 L140,160" />
+            <rect x="254" y="90" width="16" height="5" rx="2.5" fill="#0f172a" pointer-events="none" />
+            <rect x="214" y="90" width="16" height="5" rx="2.5" fill="#0f172a" pointer-events="none" />
+          </svg>
+        </div>
+
+        <!-- Carro Frontal -->
+        <div class="svg-container" id="container-car-frontal">
+          <svg viewBox="0 0 400 300" width="100%">
+            <ellipse cx="200" cy="275" rx="160" ry="10" class="shadow-ground" />
+            <rect x="52" y="220" width="28" height="50" fill="#121824" rx="4" pointer-events="none" />
+            <rect x="320" y="220" width="28" height="50" fill="#121824" rx="4" pointer-events="none" />
+            <path class="part" id="car-f-windshield" data-name="Parabrisa" d="M90,65 L310,65 L280,125 L120,125 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <path class="part" id="car-f-hood" data-name="Capô" d="M80,125 L320,125 L350,195 L50,195 Z" fill="url(#metal-car-blue)" />
+            <g>
+              <path class="part" id="car-f-headlight-left" data-name="Farol Esquerdo" d="M50,195 L115,205 L108,218 L50,205 Z" fill="#fef08a" stroke="#eab308" />
+              <circle cx="65" cy="202" r="5" fill="#fff" opacity="0.9" pointer-events="none" />
+            </g>
+            <g>
+              <path class="part" id="car-f-headlight-right" data-name="Farol Direito" d="M350,195 L285,205 L292,218 L350,205 Z" fill="#fef08a" stroke="#eab308" />
+              <circle cx="335" cy="202" r="5" fill="#fff" opacity="0.9" pointer-events="none" />
+            </g>
+            <rect class="part" id="car-f-grille" data-name="Grade Dianteira" x="125" y="198" width="150" height="32" rx="4" fill="#0f172a" />
+            <path class="part" id="car-f-bumper" data-name="Para-choque Dianteiro" d="M40,230 L360,230 L345,268 L55,268 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="car-f-mirror-left" data-name="Retrovisor Esquerdo" d="M75,90 L40,90 L40,75 L75,80 Z" fill="#1e293b" />
+            <path class="part" id="car-f-mirror-right" data-name="Retrovisor Direito" d="M325,90 L360,90 L360,75 L325,80 Z" fill="#1e293b" />
+          </svg>
+        </div>
+
+        <!-- Carro Traseira -->
+        <div class="svg-container" id="container-car-traseira">
+          <svg viewBox="0 0 400 300" width="100%">
+            <ellipse cx="200" cy="275" rx="160" ry="10" class="shadow-ground" />
+            <rect x="52" y="220" width="28" height="50" fill="#121824" rx="4" pointer-events="none" />
+            <rect x="320" y="220" width="28" height="50" fill="#121824" rx="4" pointer-events="none" />
+            <path class="part" id="car-r-window" data-name="Vidro Traseiro" d="M100,65 L300,65 L285,125 L115,125 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <path class="part" id="car-r-trunk" data-name="Tampa do Porta-malas" d="M80,125 L320,125 L340,210 L60,210 Z" fill="url(#metal-car-blue)" />
+            <rect class="part" id="car-r-light-left" data-name="Lanterna Traseira Esquerda" x="50" y="172" width="68" height="30" rx="6" fill="#f87171" stroke="#dc2626" />
+            <rect class="part" id="car-r-light-right" data-name="Lanterna Traseira Direita" x="282" y="172" width="68" height="30" rx="6" fill="#f87171" stroke="#dc2626" />
+            <path class="part" id="car-r-bumper" data-name="Para-choque Traseiro" d="M40,230 L360,230 L345,268 L55,268 Z" fill="url(#metal-car-blue)" />
+          </svg>
+        </div>
+
+
+        <!-- ==================== SVGs MOTOCICLETA ==================== -->
+        <!-- Moto Lateral Esquerda -->
+        <div class="svg-container" id="container-moto-lateral-left">
+          <svg viewBox="0 0 500 250" width="100%">
+            <ellipse cx="250" cy="215" rx="180" ry="10" class="shadow-ground" />
+            <g>
+              <circle cx="100" cy="160" r="45" fill="url(#radial-wheel)" stroke="#020617" stroke-width="5" />
+              <circle cx="100" cy="160" r="20" fill="#94a3b8" opacity="0.9" />
+              <rect x="100" y="138" width="12" height="16" class="brake-caliper" transform="rotate(45, 100, 160)" />
+              <circle cx="100" cy="160" r="10" fill="#64748b" />
+            </g>
+            <g>
+              <circle cx="400" cy="160" r="45" fill="url(#radial-wheel)" stroke="#020617" stroke-width="5" />
+              <circle cx="400" cy="160" r="20" fill="#94a3b8" opacity="0.9" />
+              <circle cx="400" cy="160" r="10" fill="#64748b" />
+            </g>
+            <path class="part" id="moto-ll-handlebars" data-name="Guidão" d="M150,45 L132,22 L158,18 Z" fill="#64748b" />
+            <circle class="part" id="moto-ll-mirror" data-name="Espelho Retrovisor Esquerdo" cx="118" cy="12" r="10" fill="#1e293b" />
+            <path class="part" id="moto-ll-fuel-tank" data-name="Tanque de Combustível" d="M160,55 C185,30 240,30 268,65 C250,100 180,100 160,55 Z" fill="url(#metal-moto-dark)" />
+            <path class="part" id="moto-ll-seat" data-name="Assento" d="M268,65 C288,58 325,58 365,80 L352,102 L268,80 Z" fill="#0f172a" />
+            <g>
+              <rect class="part" id="moto-ll-engine" data-name="Tampa do Motor Esquerda" x="200" y="115" width="75" height="55" rx="8" fill="#334155" />
+              <line x1="205" y1="125" x2="270" y2="125" stroke="#1e293b" stroke-width="2" pointer-events="none" />
+            </g>
+            <path class="part" id="moto-ll-exhaust" data-name="Escapamento" d="M270,170 L420,142 L420,158 L270,180 Z" fill="#e2e8f0" stroke="#94a3b8" />
+            <path class="part" id="moto-ll-fairing" data-name="Carenagem Lateral Esquerda" d="M170,95 L250,95 L260,120 L170,120 Z" fill="url(#metal-moto-dark)" />
+            <path class="part" id="moto-ll-fender-front" data-name="Para-lama Dianteiro" d="M75,115 A 50 50 0 0 1 140,115 L135,105 A 40 40 0 0 0 80,105 Z" fill="url(#metal-moto-dark)" />
+          </svg>
+        </div>
+
+        <!-- Moto Lateral Direita -->
+        <div class="svg-container" id="container-moto-lateral-right">
+          <svg viewBox="0 0 500 250" width="100%">
+            <ellipse cx="250" cy="215" rx="180" ry="10" class="shadow-ground" />
+            <g>
+              <circle cx="400" cy="160" r="45" fill="url(#radial-wheel)" stroke="#020617" stroke-width="5" />
+              <circle cx="400" cy="160" r="20" fill="#94a3b8" opacity="0.9" />
+              <circle cx="400" cy="160" r="10" fill="#64748b" />
+            </g>
+            <g>
+              <circle cx="100" cy="160" r="45" fill="url(#radial-wheel)" stroke="#020617" stroke-width="5" />
+              <circle cx="100" cy="160" r="20" fill="#94a3b8" opacity="0.9" />
+              <circle cx="100" cy="160" r="10" fill="#64748b" />
+            </g>
+            <path class="part" id="moto-lr-handlebars" data-name="Guidão" d="M350,45 L368,22 L342,18 Z" fill="#64748b" />
+            <circle class="part" id="moto-lr-mirror" data-name="Espelho Retrovisor Direito" cx="382" cy="12" r="10" fill="#1e293b" />
+            <path class="part" id="moto-lr-fuel-tank" data-name="Tanque de Combustível" d="M340,55 C315,35 260,35 232,65 C250,100 320,100 340,55 Z" fill="url(#metal-moto-dark)" />
+            <path class="part" id="moto-lr-seat" data-name="Assento" d="M232,65 C212,58 175,58 135,80 L148,102 L232,80 Z" fill="#0f172a" />
+            <g>
+              <rect class="part" id="moto-lr-engine" data-name="Tampa do Motor Direita" x="225" y="115" width="75" height="55" rx="8" fill="#334155" />
+              <line x1="230" y1="125" x2="295" y2="125" stroke="#1e293b" stroke-width="2" pointer-events="none" />
+            </g>
+            <path class="part" id="moto-lr-exhaust" data-name="Escapamento Principal" d="M230,170 L80,142 L80,158 L230,180 Z" fill="#e2e8f0" stroke="#94a3b8" />
+            <path class="part" id="moto-lr-fairing" data-name="Carenagem Lateral Direita" d="M330,95 L250,95 L240,120 L330,120 Z" fill="url(#metal-moto-dark)" />
+            <path class="part" id="moto-lr-fender-front" data-name="Para-lama Dianteiro" d="M425,115 A 50 50 0 0 0 360,115 L365,105 A 40 40 0 0 1 420,105 Z" fill="url(#metal-moto-dark)" />
+          </svg>
+        </div>
+
+        <!-- Moto Frontal -->
+        <div class="svg-container" id="container-moto-frontal">
+          <svg viewBox="0 0 300 300" width="100%">
+            <ellipse cx="150" cy="275" rx="80" ry="8" class="shadow-ground" />
+            <path class="part" id="moto-f-handlebars" data-name="Guidão Dianteiro" d="M60,65 L240,65 L240,75 L60,75 Z" fill="#64748b" />
+            <circle class="part" id="moto-f-headlight" data-name="Farol Dianteiro" cx="150" cy="100" r="25" fill="#fef08a" stroke="#eab308" stroke-width="2.5" />
+            <rect class="part" id="moto-f-forks" data-name="Garfo / Amortecedores" x="132" y="125" width="36" height="95" rx="4" fill="#475569" />
+            <ellipse cx="150" cy="255" rx="14" ry="40" fill="url(#radial-wheel)" stroke="#000" stroke-width="3" />
+            <path class="part" id="moto-f-fender" data-name="Para-lama Frontal" d="M118,215 L182,215 L170,232 L130,232 Z" fill="url(#metal-moto-dark)" />
+            <circle class="part" id="moto-f-turn-left" data-name="Sinalizador Dianteiro Esquerdo" cx="95" cy="100" r="8" fill="#fb923c" />
+            <circle class="part" id="moto-f-turn-right" data-name="Sinalizador Dianteiro Direito" cx="205" cy="100" r="8" fill="#fb923c" />
+          </svg>
+        </div>
+
+        <!-- Moto Traseira -->
+        <div class="svg-container" id="container-moto-traseira">
+          <svg viewBox="0 0 300 300" width="100%">
+            <ellipse cx="150" cy="275" rx="80" ry="8" class="shadow-ground" />
+            <path class="part" id="moto-r-seat" data-name="Perfil Traseiro Assento" d="M110,100 L190,100 L175,130 L125,130 Z" fill="#0f172a" />
+            <path class="part" id="moto-r-fender" data-name="Para-lama Traseiro" d="M120,130 L180,130 L190,200 L110,200 Z" fill="url(#metal-moto-dark)" />
+            <rect class="part" id="moto-r-light" data-name="Lanterna Traseira" x="135" y="112" width="30" height="15" rx="3" fill="#f87171" stroke="#dc2626" />
+            <rect class="part" id="moto-r-plate" data-name="Placa" x="125" y="200" width="50" height="40" rx="4" fill="#f8fafc" stroke="#1e293b" />
+            <ellipse cx="150" cy="265" rx="18" ry="35" fill="url(#radial-wheel)" stroke="#000" stroke-width="3" />
+            <circle class="part" id="moto-r-turn-left" data-name="Sinalizador Traseiro Esquerdo" cx="98" cy="120" r="8" fill="#fb923c" />
+            <circle class="part" id="moto-r-turn-right" data-name="Sinalizador Traseiro Direito" cx="202" cy="120" r="8" fill="#fb923c" />
+          </svg>
+        </div>
+
+
+        <!-- ==================== SVGs CAMINHÃO ==================== -->
+        <!-- Caminhão Lateral Esquerda -->
+        <div class="svg-container" id="container-truck-lateral-left">
+          <svg viewBox="0 0 600 250" width="100%">
+            <ellipse cx="300" cy="225" rx="280" ry="12" class="shadow-ground" />
+            <g>
+              <circle cx="105" cy="180" r="35" fill="url(#radial-wheel)" stroke="#000" stroke-width="5" />
+              <circle cx="105" cy="180" r="16" fill="url(#radial-calota)" />
+            </g>
+            <g>
+              <circle cx="435" cy="180" r="35" fill="url(#radial-wheel)" stroke="#000" stroke-width="5" />
+              <circle cx="435" cy="180" r="16" fill="url(#radial-calota)" />
+            </g>
+            <g>
+              <circle cx="505" cy="180" r="35" fill="url(#radial-wheel)" stroke="#000" stroke-width="5" />
+              <circle cx="505" cy="180" r="16" fill="url(#radial-calota)" />
+            </g>
+            <path class="part" id="truck-ll-cabin" data-name="Cabine do Caminhão" d="M30,120 L30,180 L180,180 L180,75 L85,75 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="truck-ll-cabin-door" data-name="Porta da Cabine" d="M85,85 L155,85 L155,175 L85,175 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="truck-ll-cabin-glass" data-name="Vidro Lateral da Cabine" d="M40,85 L80,85 L80,125 L40,120 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <rect class="part" id="truck-ll-cargo-box" data-name="Baú de Carga" x="190" y="45" width="380" height="135" rx="6" fill="url(#grad-metal)" />
+            <rect class="part" id="truck-ll-fuel-tank" data-name="Tanque de Alumínio" x="220" y="180" width="120" height="25" rx="12.5" fill="url(#radial-calota)" stroke="#475569" />
+            <rect class="part" id="truck-ll-mirror" data-name="Retrovisor de Caminhão" x="32" y="85" width="8" height="25" rx="2" fill="#1e293b" />
+          </svg>
+        </div>
+
+        <!-- Caminhão Lateral Direita -->
+        <div class="svg-container" id="container-truck-lateral-right">
+          <svg viewBox="0 0 600 250" width="100%">
+            <ellipse cx="300" cy="225" rx="280" ry="12" class="shadow-ground" />
+            <g>
+              <circle cx="495" cy="180" r="35" fill="url(#radial-wheel)" stroke="#000" stroke-width="5" />
+              <circle cx="495" cy="180" r="16" fill="url(#radial-calota)" />
+            </g>
+            <g>
+              <circle cx="165" cy="180" r="35" fill="url(#radial-wheel)" stroke="#000" stroke-width="5" />
+              <circle cx="165" cy="180" r="16" fill="url(#radial-calota)" />
+            </g>
+            <g>
+              <circle cx="95" cy="180" r="35" fill="url(#radial-wheel)" stroke="#000" stroke-width="5" />
+              <circle cx="95" cy="180" r="16" fill="url(#radial-calota)" />
+            </g>
+            <path class="part" id="truck-lr-cabin" data-name="Cabine do Caminhão" d="M570,120 L570,180 L420,180 L420,75 L515,75 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="truck-lr-cabin-door" data-name="Porta da Cabine" d="M515,85 L445,85 L445,175 L515,175 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="truck-lr-cabin-glass" data-name="Vidro Lateral da Cabine" d="M560,85 L520,85 L520,125 L560,120 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <rect class="part" id="truck-lr-cargo-box" data-name="Baú de Carga" x="30" y="45" width="380" height="135" rx="6" fill="url(#grad-metal)" />
+            <rect class="part" id="truck-lr-fuel-tank" data-name="Tanque de Alumínio" x="260" y="180" width="120" height="25" rx="12.5" fill="url(#radial-calota)" stroke="#475569" />
+            <rect class="part" id="truck-lr-mirror" data-name="Retrovisor de Caminhão" x="560" y="85" width="8" height="25" rx="2" fill="#1e293b" />
+          </svg>
+        </div>
+
+        <!-- Caminhão Frontal -->
+        <div class="svg-container" id="container-truck-frontal">
+          <svg viewBox="0 0 400 300" width="100%">
+            <ellipse cx="200" cy="282" rx="160" ry="10" class="shadow-ground" />
+            <path class="part" id="truck-f-deflector" data-name="Defletor Superior / Teto" d="M95,20 L305,20 L285,60 L115,60 Z" fill="url(#metal-car-blue)" />
+            <rect class="part" id="truck-f-windshield" data-name="Parabrisa Dianteiro" x="80" y="65" width="240" height="70" rx="6" fill="url(#metal-glass)" opacity="0.8" />
+            <rect class="part" id="truck-f-grille" data-name="Grade Frontal Principal" x="100" y="150" width="200" height="90" rx="8" fill="#0f172a" />
+            <rect class="part" id="truck-f-light-left" data-name="Farol Dianteiro Esquerdo" x="50" y="245" width="45" height="22" rx="4" class="glass-light" />
+            <rect class="part" id="truck-f-light-right" data-name="Farol Dianteiro Direito" x="305" y="245" width="45" height="22" rx="4" class="glass-light" />
+            <rect class="part" id="truck-f-bumper" data-name="Para-choque Dianteiro" x="40" y="240" width="320" height="40" rx="6" fill="url(#metal-car-blue)" />
+            <rect class="part" id="truck-f-mirror-left" data-name="Retrovisor Principal Esquerdo" x="48" y="70" width="12" height="40" rx="3" fill="#1e293b" />
+            <rect class="part" id="truck-f-mirror-right" data-name="Retrovisor Principal Direito" x="340" y="70" width="12" height="40" rx="3" fill="#1e293b" />
+          </svg>
+        </div>
+
+        <!-- Caminhão Traseira -->
+        <div class="svg-container" id="container-truck-traseira">
+          <svg viewBox="0 0 400 300" width="100%">
+            <ellipse cx="200" cy="282" rx="160" ry="10" class="shadow-ground" />
+            <rect class="part" id="truck-r-box-frame" data-name="Portas do Baú / Traseira" x="50" y="30" width="300" height="210" rx="5" fill="url(#grad-metal)" />
+            <line x1="145" y1="30" x2="145" y2="240" stroke="#334155" stroke-width="4" />
+            <line x1="255" y1="30" x2="255" y2="240" stroke="#334155" stroke-width="4" />
+            <rect class="part" id="truck-r-bumper" data-name="Para-choque Traseiro" x="40" y="245" width="320" height="30" rx="4" fill="#1e293b" />
+            <rect class="part" id="truck-r-light-left" data-name="Lanterna Traseira Esquerda" x="60" y="250" width="50" height="18" rx="3" class="glass-light-red" />
+            <rect class="part" id="truck-r-light-right" data-name="Lanterna Traseira Direita" x="290" y="250" width="50" height="18" rx="3" class="glass-light-red" />
+          </svg>
+        </div>
+
+
+        <!-- ==================== SVGs ÔNIBUS ==================== -->
+        <!-- Ônibus Lateral Esquerda -->
+        <div class="svg-container" id="container-bus-lateral-left">
+          <svg viewBox="0 0 600 220" width="100%">
+            <ellipse cx="300" cy="200" rx="270" ry="12" class="shadow-ground" />
+            <circle cx="120" cy="165" r="30" fill="url(#radial-wheel)" stroke="#000" stroke-width="4" />
+            <circle cx="120" cy="165" r="15" fill="url(#radial-calota)" />
+            <circle cx="480" cy="165" r="30" fill="url(#radial-wheel)" stroke="#000" stroke-width="4" />
+            <circle cx="480" cy="165" r="15" fill="url(#radial-calota)" />
+            <rect class="part" id="bus-ll-body" data-name="Carroceria / Lateral" x="40" y="30" width="520" height="135" rx="14" fill="url(#grad-metal)" />
+            <path class="part" id="bus-ll-windows" data-name="Janelas dos Passageiros" d="M90,45 L540,45 L540,85 L90,85 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <path class="part" id="bus-ll-windshield" data-name="Parabrisa Dianteiro (Lateral)" d="M42,45 L85,45 L85,85 L42,85 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <rect class="part" id="bus-ll-door" data-name="Porta de Passageiros" x="420" y="85" width="40" height="80" rx="3" fill="url(#metal-glass)" opacity="0.9" stroke="#000" stroke-width="2" />
+            <rect class="part" id="bus-ll-luggage" data-name="Bagageiro / Portas de Carga" x="180" y="120" width="200" height="35" rx="4" fill="#334155" />
+          </svg>
+        </div>
+
+        <!-- Ônibus Lateral Direita -->
+        <div class="svg-container" id="container-bus-lateral-right">
+          <svg viewBox="0 0 600 220" width="100%">
+            <ellipse cx="300" cy="200" rx="270" ry="12" class="shadow-ground" />
+            <circle cx="480" cy="165" r="30" fill="url(#radial-wheel)" stroke="#000" stroke-width="4" />
+            <circle cx="480" cy="165" r="15" fill="url(#radial-calota)" />
+            <circle cx="120" cy="165" r="30" fill="url(#radial-wheel)" stroke="#000" stroke-width="4" />
+            <circle cx="120" cy="165" r="15" fill="url(#radial-calota)" />
+            <rect class="part" id="bus-lr-body" data-name="Carroceria / Lateral" x="40" y="30" width="520" height="135" rx="14" fill="url(#grad-metal)" />
+            <path class="part" id="bus-lr-windows" data-name="Janelas dos Passageiros" d="M60,45 L510,45 L510,85 L60,85 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <path class="part" id="bus-lr-windshield" data-name="Parabrisa Dianteiro (Lateral)" d="M558,45 L515,45 L515,85 L558,85 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <rect class="part" id="bus-lr-door" data-name="Porta de Passageiros" x="140" y="85" width="40" height="80" rx="3" fill="url(#metal-glass)" opacity="0.9" stroke="#000" stroke-width="2" />
+            <rect class="part" id="bus-lr-luggage" data-name="Bagageiro / Portas de Carga" x="220" y="120" width="200" height="35" rx="4" fill="#334155" />
+          </svg>
+        </div>
+
+        <!-- Ônibus Frontal -->
+        <div class="svg-container" id="container-bus-frontal">
+          <svg viewBox="0 0 350 300" width="100%">
+            <ellipse cx="175" cy="282" rx="140" ry="10" class="shadow-ground" />
+            <rect class="part" id="bus-f-body" data-name="Painel Frontal" x="40" y="20" width="270" height="250" rx="18" fill="url(#grad-metal)" />
+            <rect class="part" id="bus-f-itinerary" data-name="Painel de Itinerário" x="70" y="32" width="210" height="25" rx="4" fill="#020617" stroke="#eab308" />
+            <rect class="part" id="bus-f-windshield" data-name="Parabrisa Dianteiro Panorâmico" x="50" y="65" width="250" height="100" rx="8" fill="url(#metal-glass)" opacity="0.8" />
+            <rect class="part" id="bus-f-light-left" data-name="Farol Dianteiro Esquerdo" x="60" y="215" width="42" height="20" rx="4" class="glass-light" />
+            <rect class="part" id="bus-f-light-right" data-name="Farol Dianteiro Direito" x="248" y="215" width="42" height="20" rx="4" class="glass-light" />
+            <rect class="part" id="bus-f-bumper" data-name="Para-choque Dianteiro" x="40" y="240" width="270" height="30" rx="6" fill="#1e293b" />
+            <path class="part" id="bus-f-mirror-left" data-name="Retrovisor Esquerdo" d="M70,30 Q25,5 30,55" fill="none" stroke="#1e293b" stroke-width="6" />
+            <path class="part" id="bus-f-mirror-right" data-name="Retrovisor Direito" d="M280,30 Q325,5 320,55" fill="none" stroke="#1e293b" stroke-width="6" />
+          </svg>
+        </div>
+
+        <!-- Ônibus Traseira -->
+        <div class="svg-container" id="container-bus-traseira">
+          <svg viewBox="0 0 350 300" width="100%">
+            <ellipse cx="175" cy="282" rx="140" ry="10" class="shadow-ground" />
+            <rect class="part" id="bus-r-body" data-name="Painel Traseiro" x="40" y="20" width="270" height="250" rx="18" fill="url(#grad-metal)" />
+            <rect class="part" id="bus-r-window" data-name="Vidro Traseiro" x="50" y="35" width="250" height="75" rx="6" fill="url(#metal-glass)" opacity="0.8" />
+            <rect class="part" id="bus-r-engine-cover" data-name="Tampa do Motor / Grade" x="70" y="170" width="210" height="70" rx="6" fill="#1e293b" />
+            <rect class="part" id="bus-r-light-left" data-name="Lanterna Traseira Esquerda" x="48" y="140" width="16" height="65" rx="3" class="glass-light-red" />
+            <rect class="part" id="bus-r-light-right" data-name="Lanterna Traseira Direita" x="286" y="140" width="16" height="65" rx="3" class="glass-light-red" />
+            <rect class="part" id="bus-r-bumper" data-name="Para-choque Traseiro" x="40" y="245" width="270" height="25" rx="4" fill="#0f172a" />
+          </svg>
+        </div>
+
+
+        <!-- ==================== SVGs UTILITÁRIO / VAN (NOVO E DETALHADO) ==================== -->
+        <!-- Van Lateral Esquerda -->
+        <div class="svg-container" id="container-van-lateral-left">
+          <svg viewBox="0 0 520 220" width="100%">
+            <ellipse cx="260" cy="188" rx="210" ry="11" class="shadow-ground" />
+            <!-- Rodas de Utilitário -->
+            <g>
+              <circle cx="120" cy="155" r="32" class="wheel-pneu" />
+              <circle cx="120" cy="155" r="20" fill="url(#radial-calota)" />
+              <circle cx="120" cy="155" r="6" fill="#334155" />
+            </g>
+            <g>
+              <circle cx="400" cy="155" r="32" class="wheel-pneu" />
+              <circle cx="400" cy="155" r="20" fill="url(#radial-calota)" />
+              <circle cx="400" cy="155" r="6" fill="#334155" />
+            </g>
+            <!-- Vidros -->
+            <path class="part" id="van-ll-glass-front" data-name="Vidro Dianteiro" d="M190,80 L235,50 L285,50 L285,80 Z" fill="url(#metal-glass)" opacity="0.75" />
+            <path class="part" id="van-ll-glass-side" data-name="Vidro Lateral do Salão" d="M290,50 L400,50 L400,80 L290,80 Z" fill="url(#metal-glass)" opacity="0.75" />
+            
+            <!-- Lataria -->
+            <path class="part" id="van-ll-fender-front" data-name="Para-lama Dianteiro" d="M45,120 L160,120 L160,80 L70,80 Q45,95 45,120 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="van-ll-door-front" data-name="Porta Dianteira Esquerda" d="M160,80 L255,80 L255,160 L160,160 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="van-ll-panel-side" data-name="Painel Lateral / Porta Corrediça" d="M255,80 L420,80 L420,160 L255,160 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="van-ll-fender-rear" data-name="Para-lama Traseiro" d="M420,80 L475,80 Q480,105 465,120 L420,120 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="van-ll-roof" data-name="Teto da Van" d="M220,50 L465,50 L455,42 L230,42 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="van-ll-sill" data-name="Soleira da Van" d="M160,160 L420,160 L420,168 L160,168 Z" fill="#1e293b" />
+            <path class="part" id="van-ll-mirror" data-name="Retrovisor Esquerdo" d="M165,77 C155,77 150,70 155,65 C160,60 168,68 165,77 Z" fill="#1e293b" />
+
+            <!-- Trilho da Porta Corrediça -->
+            <line x1="255" y1="85" x2="415" y2="85" stroke="#1e293b" stroke-width="2" pointer-events="none" />
+          </svg>
+        </div>
+
+        <!-- Van Lateral Direita -->
+        <div class="svg-container" id="container-van-lateral-right">
+          <svg viewBox="0 0 520 220" width="100%">
+            <ellipse cx="260" cy="188" rx="210" ry="11" class="shadow-ground" />
+            <!-- Rodas -->
+            <g>
+              <circle cx="120" cy="155" r="32" class="wheel-pneu" />
+              <circle cx="120" cy="155" r="20" fill="url(#radial-calota)" />
+              <circle cx="120" cy="155" r="6" fill="#334155" />
+            </g>
+            <g>
+              <circle cx="400" cy="155" r="32" class="wheel-pneu" />
+              <circle cx="400" cy="155" r="20" fill="url(#radial-calota)" />
+              <circle cx="400" cy="155" r="6" fill="#334155" />
+            </g>
+            <!-- Vidros -->
+            <path class="part" id="van-lr-glass-front" data-name="Vidro Dianteiro" d="M330,80 L285,50 L235,50 L235,80 Z" fill="url(#metal-glass)" opacity="0.75" />
+            <path class="part" id="van-lr-glass-side" data-name="Vidro Lateral do Salão" d="M230,50 L120,50 L120,80 L230,80 Z" fill="url(#metal-glass)" opacity="0.75" />
+            
+            <!-- Lataria -->
+            <path class="part" id="van-lr-fender-front" data-name="Para-lama Dianteiro" d="M475,120 L360,120 L360,80 L450,80 Q475,95 475,120 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="van-lr-door-front" data-name="Porta Dianteira Direita" d="M360,80 L265,80 L265,160 L360,160 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="van-lr-panel-side" data-name="Painel Lateral / Porta Corrediça" d="M265,80 L100,80 L100,160 L265,160 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="van-lr-fender-rear" data-name="Para-lama Traseiro" d="M100,80 L45,80 Q40,105 55,120 L100,120 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="van-lr-roof" data-name="Teto da Van" d="M300,50 L55,50 L65,42 L290,42 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="van-lr-sill" data-name="Soleira da Van" d="M360,160 L100,160 L100,168 L360,168 Z" fill="#1e293b" />
+            <path class="part" id="van-lr-mirror" data-name="Retrovisor Direito" d="M355,77 C365,77 370,70 365,65 C360,60 352,68 355,77 Z" fill="#1e293b" />
+
+            <line x1="265" y1="85" x2="105" y2="85" stroke="#1e293b" stroke-width="2" pointer-events="none" />
+          </svg>
+        </div>
+
+        <!-- Van Frontal -->
+        <div class="svg-container" id="container-van-frontal">
+          <svg viewBox="0 0 400 300" width="100%">
+            <ellipse cx="200" cy="275" rx="150" ry="10" class="shadow-ground" />
+            <path class="part" id="van-f-windshield" data-name="Parabrisa" d="M85,60 L315,60 L290,130 L110,130 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <path class="part" id="van-f-hood" data-name="Grade Capô" d="M75,130 L325,130 L345,190 L55,190 Z" fill="url(#metal-car-blue)" />
+            <rect class="part" id="van-f-grille" data-name="Grade Dianteira" x="110" y="195" width="180" height="35" rx="6" fill="#0f172a" />
+            <rect class="part" id="van-f-light-left" data-name="Farol Esquerdo" x="50" y="188" width="48" height="22" rx="4" class="glass-light" />
+            <rect class="part" id="van-f-light-right" data-name="Farol Direito" x="302" y="188" width="48" height="22" rx="4" class="glass-light" />
+            <path class="part" id="van-f-bumper" data-name="Para-choque Dianteiro" d="M40,230 L360,230 L345,268 L55,268 Z" fill="#1e293b" />
+          </svg>
+        </div>
+
+        <!-- Van Traseira -->
+        <div class="svg-container" id="container-van-traseira">
+          <svg viewBox="0 0 400 300" width="100%">
+            <ellipse cx="200" cy="275" rx="150" ry="10" class="shadow-ground" />
+            <rect class="part" id="van-r-body" data-name="Portas Traseiras / Lataria" x="50" y="40" width="300" height="205" rx="10" fill="url(#metal-car-blue)" />
+            <!-- Vidros traseiros divididos -->
+            <rect class="part" id="van-r-window-left" data-name="Vidro Traseiro Esquerdo" x="65" y="55" width="125" height="65" rx="4" fill="url(#metal-glass)" opacity="0.8" />
+            <rect class="part" id="van-r-window-right" data-name="Vidro Traseiro Direito" x="210" y="55" width="125" height="65" rx="4" fill="url(#metal-glass)" opacity="0.8" />
+            <!-- Divisão das portas -->
+            <line x1="200" y1="40" x2="200" y2="245" stroke="#0f172a" stroke-width="2.5" />
+            <path class="part" id="van-r-bumper" data-name="Para-choque Traseiro" d="M40,240 L360,240 L345,270 L55,270 Z" fill="#1e293b" />
+            <rect class="part" id="van-r-light-left" data-name="Lanterna Traseira Esquerda" x="52" y="140" width="15" height="60" rx="3" class="glass-light-red" />
+            <rect class="part" id="van-r-light-right" data-name="Lanterna Traseira Direita" x="333" y="140" width="15" height="60" rx="3" class="glass-light-red" />
+          </svg>
+        </div>
+
+
+        <!-- ==================== SVGs VEÍCULO CUSTOMIZADO (CHASSI GENÉRICO DE 4 PERSPECTIVAS) ==================== -->
+        <!-- Custom Lateral Esquerda -->
+        <div class="svg-container" id="container-custom-lateral-left">
+          <svg viewBox="0 0 500 200" width="100%">
+            <ellipse cx="250" cy="180" rx="200" ry="10" class="shadow-ground" />
+            <g>
+              <circle cx="120" cy="140" r="28" class="wheel-pneu" />
+              <circle cx="120" cy="140" r="16" fill="url(#radial-calota)" />
+            </g>
+            <g>
+              <circle cx="380" cy="140" r="28" class="wheel-pneu" />
+              <circle cx="380" cy="140" r="16" fill="url(#radial-calota)" />
+            </g>
+            <path class="part" id="cust-ll-roof" data-name="Teto / Parte Superior" d="M150,45 L350,45 L320,35 L180,35 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="cust-ll-windows" data-name="Lateral Superior (Área de Vidro)" d="M140,50 L360,50 L340,85 L160,85 Z" fill="url(#metal-glass)" opacity="0.75" />
+            <path class="part" id="cust-ll-body-front" data-name="Lateral Dianteira" d="M50,110 L250,110 L250,85 L80,85 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="cust-ll-body-rear" data-name="Lateral Traseira" d="M250,110 L450,110 L420,85 L250,85 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="cust-ll-sill" data-name="Saia / Parte Inferior" d="M150,145 L350,145 L350,153 L150,153 Z" fill="#1e293b" />
+          </svg>
+        </div>
+
+        <!-- Custom Lateral Direita -->
+        <div class="svg-container" id="container-custom-lateral-right">
+          <svg viewBox="0 0 500 200" width="100%">
+            <ellipse cx="250" cy="180" rx="200" ry="10" class="shadow-ground" />
+            <g>
+              <circle cx="380" cy="140" r="28" class="wheel-pneu" />
+              <circle cx="380" cy="140" r="16" fill="url(#radial-calota)" />
+            </g>
+            <g>
+              <circle cx="120" cy="140" r="28" class="wheel-pneu" />
+              <circle cx="120" cy="140" r="16" fill="url(#radial-calota)" />
+            </g>
+            <path class="part" id="cust-lr-roof" data-name="Teto / Parte Superior" d="M350,45 L150,45 L180,35 L320,35 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="cust-lr-windows" data-name="Lateral Superior (Área de Vidro)" d="M360,50 L140,50 L160,85 L340,85 Z" fill="url(#metal-glass)" opacity="0.75" />
+            <path class="part" id="cust-lr-body-front" data-name="Lateral Dianteira" d="M450,110 L250,110 L250,85 L420,85 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="cust-lr-body-rear" data-name="Lateral Traseira" d="M250,110 L50,110 L80,85 L250,85 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="cust-lr-sill" data-name="Saia / Parte Inferior" d="M350,145 L150,145 L150,153 L350,153 Z" fill="#1e293b" />
+          </svg>
+        </div>
+
+        <!-- Custom Frontal -->
+        <div class="svg-container" id="container-custom-frontal">
+          <svg viewBox="0 0 400 300" width="100%">
+            <ellipse cx="200" cy="275" rx="140" ry="10" class="shadow-ground" />
+            <path class="part" id="cust-f-glass" data-name="Vidro Frontal / Parabrisa" d="M90,65 L310,65 L280,130 L120,130 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <path class="part" id="cust-f-top" data-name="Frente Superior" d="M80,130 L320,130 L340,195 L60,195 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="cust-f-grille" data-name="Grade / Para-choque" d="M50,195 L350,195 L335,260 L65,260 Z" fill="#1e293b" />
+            <rect class="part" id="cust-f-light-left" data-name="Farol Esquerdo" x="65" y="200" width="40" height="20" rx="3" class="glass-light" />
+            <rect class="part" id="cust-f-light-right" data-name="Farol Direito" x="295" y="200" width="40" height="20" rx="3" class="glass-light" />
+          </svg>
+        </div>
+
+        <!-- Custom Traseira -->
+        <div class="svg-container" id="container-custom-traseira">
+          <svg viewBox="0 0 400 300" width="100%">
+            <ellipse cx="200" cy="275" rx="140" ry="10" class="shadow-ground" />
+            <path class="part" id="cust-r-glass" data-name="Vidro Traseiro" d="M90,65 L310,65 L280,130 L120,130 Z" fill="url(#metal-glass)" opacity="0.8" />
+            <path class="part" id="cust-r-top" data-name="Traseira Superior" d="M80,130 L320,130 L340,210 L60,210 Z" fill="url(#metal-car-blue)" />
+            <path class="part" id="cust-r-bottom" data-name="Traseira Inferior" d="M50,210 L350,210 L335,265 L65,265 Z" fill="#1e293b" />
+            <rect class="part" id="cust-r-light-left" data-name="Lanterna Esquerda" x="60" y="175" width="45" height="22" rx="4" class="glass-light-red" />
+            <rect class="part" id="cust-r-light-right" data-name="Lanterna Direita" x="295" y="175" width="45" height="22" rx="4" class="glass-light-red" />
+          </svg>
+        </div>
+
+      </div>
+
+      <div class="hint-bar" id="hint-text">
+        Mova o mouse sobre o veículo para inspecionar e clique na peça para avaria.
+      </div>
+      
+      <div class="tts-toggle-box">
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="tts-active" class="tts-checkbox" checked>
+          <label for="tts-active">Ativar sintetizador de voz (Speech) no Clique</label>
+        </div>
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="tts-hover-active" class="tts-checkbox">
+          <label for="tts-hover-active">Falar ao passar o mouse (Hover)</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloco Direito: Lógica de Registro e Lista de Danos -->
+    <div class="glass-card">
+      <!-- Formulário de Registro de Avaria -->
+      <div class="damage-form-panel" id="form-panel">
+        <h3 style="margin-bottom: 5px;">Avaria Detectada</h3>
+        <p style="font-size: 0.9rem; margin-bottom: 15px;">
+          Peça: <span id="label-selected-part" style="font-weight: 700; color: var(--primary);">-</span>
+        </p>
+
+        <div class="form-group">
+          <label for="input-damage-type">Tipo de Avaria</label>
+          <select id="input-damage-type" class="form-control">
+            <option value="scratch">Arranhão / Risco</option>
+            <option value="dent">Amassado</option>
+            <option value="crack">Trinca / Rachadura</option>
+            <option value="broken">Quebrado / Ausente</option>
+            <option value="rust">Corrosão / Ferrugem</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Gravidade / Severidade</label>
+          <div class="severity-options">
+            <button type="button" class="severity-btn active" data-severity="low" onclick="setSeverity('low')">Leve</button>
+            <button type="button" class="severity-btn" data-severity="medium" onclick="setSeverity('medium')">Média</button>
+            <button type="button" class="severity-btn" data-severity="high" onclick="setSeverity('high')">Severa</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-damage-notes">Observações do Vistoriador</label>
+          <textarea id="input-damage-notes" class="form-control" rows="2" placeholder="Ex: Detalhes específicos da avaria..."></textarea>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-secondary" onclick="cancelRegistration()">Cancelar</button>
+          <button class="btn btn-primary" onclick="saveDamage()">Salvar Registro</button>
+        </div>
+      </div>
+
+      <!-- Lista de Registros -->
+      <div class="card-title" style="margin-top: 5px;">
+        <span>📋</span>
+        <span>Avarias Registradas (<span id="damages-count">0</span>)</span>
+      </div>
+
+      <div class="damage-list-wrapper">
+        <div id="damages-list-container">
+          <div class="empty-state">Nenhum dano registrado para este veículo.</div>
+        </div>
+      </div>
+
+      <!-- Ações do Relatório (Exportação) -->
+      <div class="report-actions-panel">
+        <button class="btn btn-whatsapp" onclick="sendWhatsApp()" title="Enviar para o WhatsApp do Proprietário">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.739-1.456L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.588 2.019 14.12 1.01 11.994 1.01c-5.442 0-9.866 4.372-9.87 9.802 0 1.714.47 3.387 1.357 4.847l-.994 3.63 3.77-.986zm11.587-7.85c-.328-.162-1.936-.945-2.235-1.054-.3-.109-.517-.162-.734.162-.218.324-.843 1.054-1.033 1.27-.19.218-.38.243-.708.082-.328-.162-1.383-.504-2.635-1.61-1.002-.885-1.678-1.977-1.875-2.3-.197-.324-.021-.5-.185-.662-.148-.145-.328-.379-.492-.567-.164-.188-.219-.324-.328-.541-.109-.217-.055-.405-.027-.567.027-.162.218-.541.328-.811.109-.27.218-.459.328-.675.109-.217.055-.405.027-.567-.027-.162-.218-.541-.328-.811-.109-.27.218-.459.328-.675.109-.217.055-.405.027-.567.027-.162.218-.541.328-.811.109-.27.218-.459.328-.675.109-.217.055-.405.027-.567.027-.162.218-.541.328-.811.109-.27.218-.459.328-.675.109-.217.055-.405.027-.567-.027-.162-.218-.541-.328-.811.109-.27.218-.459.328-.675.109-.217.055-.405.027-.567.027-.162.218-.541.328-.811.109-.27.218-.459.328-.675.109-.217.055-.405.027-.567.027-.162.218-.541.328-.811.109-.27.218-.459.328-.675.109-.217.055-.405.027-.567z" />
+          </svg>
+          Enviar via WhatsApp
+        </button>
+        <div class="export-row">
+          <button class="btn btn-secondary" onclick="copyReport()" title="Copiar Relatório Completo">
+            📋 Copiar Relatório
+          </button>
+          <button class="btn btn-secondary" onclick="downloadTXT()" title="Salvar em arquivo Bloco de Notas">
+            💾 Gerar Bloco de Notas (TXT)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentVehicle = 'car';
+    let currentView = 'lateral-left';
+    let selectedPartId = null;
+    let selectedPartName = '';
+    let selectedSeverity = 'low';
+    
+    // Lista de danos salvos
+    let registeredDamages = [];
+    
+    // Timer para evitar spam de voz no hover
+    let hoverSpeechTimeout = null;
+    let lastHoveredPartId = null;
+
+    // Função para alternar o tema Claro/Escuro
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+      const isLight = document.body.classList.contains('light-mode');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      updateThemeUI();
+      speakText(`Tema ${isLight ? 'claro' : 'escuro'} ativado`);
+    }
+
+    function updateThemeUI() {
+      const isLight = document.body.classList.contains('light-mode');
+      document.getElementById('theme-icon').innerText = isLight ? '🌙' : '☀️';
+      document.getElementById('theme-text').innerText = isLight ? 'Modo Escuro' : 'Modo Claro';
+    }
+    
+    // Carregar dados do localStorage
+    if (localStorage.getItem('saved_damages')) {
+      try {
+        registeredDamages = JSON.parse(localStorage.getItem('saved_damages'));
+      } catch (e) {
+        registeredDamages = [];
+      }
+    }
+
+    // Carregar dados de proprietário do localStorage
+    window.onload = () => {
+      // Carregar tema
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
+        document.body.classList.add('light-mode');
+        updateThemeUI();
+      } else {
+        updateThemeUI();
+      }
+
+      const savedOwner = localStorage.getItem('vistoria_owner');
+      const savedPhone = localStorage.getItem('vistoria_phone');
+      const savedBrand = localStorage.getItem('vistoria_brand');
+      const savedPlate = localStorage.getItem('vistoria_plate');
+
+      if (savedOwner) document.getElementById('info-owner').value = savedOwner;
+      if (savedPhone) document.getElementById('info-phone').value = savedPhone;
+      if (savedBrand) document.getElementById('info-brand').value = savedBrand;
+      if (savedPlate) document.getElementById('info-plate').value = savedPlate;
+
+      // Eventos para salvar dados do proprietário na digitação
+      ['info-owner', 'info-phone', 'info-brand', 'info-plate'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+          localStorage.setItem('vistoria_owner', document.getElementById('info-owner').value);
+          localStorage.setItem('vistoria_phone', document.getElementById('info-phone').value);
+          localStorage.setItem('vistoria_brand', document.getElementById('info-brand').value);
+          localStorage.setItem('vistoria_plate', document.getElementById('info-plate').value);
+        });
+      });
+
+      setupSvgListeners();
+      setupTooltipAndHoverEvents();
+      applySavedDamagesColors();
+      renderDamagesList();
+      updateStats();
+    };
+
+    function setupSvgListeners() {
+      document.querySelectorAll('.part').forEach(part => {
+        part.onclick = null;
+        
+        part.onclick = function(e) {
+          document.querySelectorAll('.part').forEach(p => p.classList.remove('selected'));
+          
+          this.classList.add('selected');
+          selectedPartId = this.id;
+          selectedPartName = this.getAttribute('data-name');
+          
+          document.getElementById('label-selected-part').innerText = selectedPartName;
+          document.getElementById('form-panel').classList.add('active');
+          document.getElementById('hint-text').innerText = `Inserindo dano na peça: ${selectedPartName}`;
+
+          const ttsActive = document.getElementById('tts-active').checked;
+          if (ttsActive) {
+            speakText(`Peça selecionada: ${selectedPartName}`);
+          }
+
+          const existing = registeredDamages.find(d => d.partId === selectedPartId && d.vehicle === currentVehicle);
+          if (existing) {
+            document.getElementById('input-damage-type').value = existing.type;
+            setSeverity(existing.severity);
+            document.getElementById('input-damage-notes').value = existing.notes;
+          } else {
+            document.getElementById('input-damage-type').value = 'scratch';
+            setSeverity('low');
+            document.getElementById('input-damage-notes').value = '';
+          }
+        };
+      });
+    }
+
+    function setupTooltipAndHoverEvents() {
+      const tooltip = document.getElementById('custom-tooltip');
+      const tooltipText = document.getElementById('tooltip-text');
+      const tooltipView = document.getElementById('tooltip-view-label');
+      
+      const viewLabels = {
+        'lateral-left': 'Lateral Esquerda',
+        'lateral-right': 'Lateral Direita',
+        'frontal': 'Vista Frontal',
+        'traseira': 'Vista Traseira'
+      };
+
+      document.querySelectorAll('.part').forEach(part => {
+        part.addEventListener('mouseenter', function(e) {
+          const name = this.getAttribute('data-name');
+          tooltipText.innerText = name;
+          tooltipView.innerText = viewLabels[currentView];
+          tooltip.style.display = 'block';
+          setTimeout(() => tooltip.classList.add('visible'), 20);
+
+          const ttsHoverActive = document.getElementById('tts-hover-active').checked;
+          if (ttsHoverActive && this.id !== lastHoveredPartId) {
+            lastHoveredPartId = this.id;
+            clearTimeout(hoverSpeechTimeout);
+            hoverSpeechTimeout = setTimeout(() => {
+              speakText(name);
+            }, 150);
+          }
+        });
+
+        part.addEventListener('mousemove', function(e) {
+          tooltip.style.left = e.clientX + 'px';
+          tooltip.style.top = e.clientY + 'px';
+        });
+
+        part.addEventListener('mouseleave', function(e) {
+          tooltip.classList.remove('visible');
+          setTimeout(() => {
+            if (!tooltip.classList.contains('visible')) {
+              tooltip.style.display = 'none';
+            }
+          }, 100);
+          
+          clearTimeout(hoverSpeechTimeout);
+          lastHoveredPartId = null;
+        });
+      });
+    }
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'pt-BR';
+        utterance.rate = 1.15;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function selectVehicle(type) {
+      currentVehicle = type;
+      
+      const buttons = ['car', 'moto', 'truck', 'bus', 'van', 'custom'];
+      buttons.forEach(b => {
+        document.getElementById(`btn-vehicle-${b}`).classList.toggle('active', type === b);
+      });
+      
+      const vehicleIcons = { car: '🚗', moto: '🏍️', truck: '🚛', bus: '🚌', van: '🚐', custom: '➕' };
+      document.getElementById('vehicle-icon-indicator').innerText = vehicleIcons[type];
+
+      // Exibir ou ocultar o painel de veículo personalizado
+      const customPanel = document.getElementById('custom-name-panel');
+      if (type === 'custom') {
+        customPanel.classList.add('active');
+        updateCustomVehicleTitle();
+      } else {
+        customPanel.classList.remove('active');
+      }
+
+      selectView('lateral-left');
+    }
+
+    function updateCustomVehicleTitle() {
+      if (currentVehicle === 'custom') {
+        const customName = document.getElementById('input-custom-vehicle-name').value.trim() || 'Veículo Personalizado';
+        const viewLabels = {
+          'lateral-left': 'Lateral Esquerda',
+          'lateral-right': 'Lateral Direita',
+          'frontal': 'Frontal',
+          'traseira': 'Traseira'
+        };
+        document.getElementById('vehicle-view-title').innerText = `${customName} - ${viewLabels[currentView]}`;
+      }
+    }
+
+    function selectView(view) {
+      currentView = view;
+
+      document.querySelectorAll('#perspective-selector .selector-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-view') === view);
+      });
+
+      const vehicleLabels = { car: 'Automóvel', moto: 'Motocicleta', truck: 'Caminhão', bus: 'Ônibus', van: 'Utilitário / Van' };
+      const viewLabels = {
+        'lateral-left': 'Lateral Esquerda',
+        'lateral-right': 'Lateral Direita',
+        'frontal': 'Frontal',
+        'traseira': 'Traseira'
+      };
+
+      if (currentVehicle === 'custom') {
+        updateCustomVehicleTitle();
+      } else {
+        document.getElementById('vehicle-view-title').innerText = `${vehicleLabels[currentVehicle]} - ${viewLabels[view]}`;
+      }
+
+      document.querySelectorAll('.svg-container').forEach(container => {
+        container.classList.remove('active');
+      });
+
+      const targetSvgContainer = document.getElementById(`container-${currentVehicle}-${view}`);
+      if (targetSvgContainer) {
+        targetSvgContainer.classList.add('active');
+      }
+
+      cancelRegistration();
+      setupSvgListeners();
+      setupTooltipAndHoverEvents();
+      applySavedDamagesColors();
+    }
+
+    function setSeverity(sev) {
+      selectedSeverity = sev;
+      document.querySelectorAll('.severity-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-severity') === sev);
+      });
+    }
+
+    function saveDamage() {
+      if (!selectedPartId) return;
+
+      const typeSelect = document.getElementById('input-damage-type');
+      const typeVal = typeSelect.value;
+      const typeName = typeSelect.options[typeSelect.selectedIndex].text;
+      const notes = document.getElementById('input-damage-notes').value.trim();
+
+      const newDamage = {
+        id: Date.now().toString(),
+        vehicle: currentVehicle,
+        view: currentView,
+        partId: selectedPartId,
+        partName: selectedPartName,
+        type: typeVal,
+        typeName: typeName,
+        severity: selectedSeverity,
+        notes: notes
+      };
+
+      registeredDamages = registeredDamages.filter(d => !(d.partId === selectedPartId && d.vehicle === currentVehicle));
+      registeredDamages.push(newDamage);
+
+      localStorage.setItem('saved_damages', JSON.stringify(registeredDamages));
+
+      const element = document.getElementById(selectedPartId);
+      if (element) {
+        element.classList.remove('selected', 'damage-low', 'damage-medium', 'damage-high');
+        element.classList.add(`damage-${selectedSeverity}`);
+      }
+
+      speakText(`Dano de ${typeName} registrado na peça ${selectedPartName}`);
+
+      cancelRegistration();
+      renderDamagesList();
+      updateStats();
+    }
+
+    function cancelRegistration() {
+      selectedPartId = null;
+      selectedPartName = '';
+      document.querySelectorAll('.part').forEach(p => p.classList.remove('selected'));
+      document.getElementById('form-panel').classList.remove('active');
+      document.getElementById('hint-text').innerText = 'Mova o mouse sobre o veículo para inspecionar e clique na peça para avaria.';
+    }
+
+    function deleteDamage(id, partId, partName) {
+      registeredDamages = registeredDamages.filter(d => d.id !== id);
+      localStorage.setItem('saved_damages', JSON.stringify(registeredDamages));
+
+      const element = document.getElementById(partId);
+      if (element) {
+        element.classList.remove('damage-low', 'damage-medium', 'damage-high');
+      }
+
+      speakText(`Avaria da peça ${partName} removida.`);
+      renderDamagesList();
+      updateStats();
+    }
+
+    function applySavedDamagesColors() {
+      document.querySelectorAll('.part').forEach(p => {
+        p.classList.remove('damage-low', 'damage-medium', 'damage-high');
+      });
+
+      registeredDamages.forEach(d => {
+        if (d.vehicle === currentVehicle && d.view === currentView) {
+          const element = document.getElementById(d.partId);
+          if (element) {
+            element.classList.add(`damage-${d.severity}`);
+          }
+        }
+      });
+    }
+
+    function updateStats() {
+      const low = registeredDamages.filter(d => d.severity === 'low').length;
+      const medium = registeredDamages.filter(d => d.severity === 'medium').length;
+      const high = registeredDamages.filter(d => d.severity === 'high').length;
+
+      document.getElementById('stat-low').innerText = low;
+      document.getElementById('stat-medium').innerText = medium;
+      document.getElementById('stat-high').innerText = high;
+    }
+
+    function renderDamagesList() {
+      const container = document.getElementById('damages-list-container');
+      const counter = document.getElementById('damages-count');
+      
+      container.innerHTML = '';
+      counter.innerText = registeredDamages.length;
+
+      if (registeredDamages.length === 0) {
+        container.innerHTML = `<div class="empty-state">Nenhum dano registrado para este veículo.</div>`;
+        return;
+      }
+
+      const sortedDamages = [...registeredDamages].sort((a, b) => {
+        if (a.vehicle === currentVehicle && b.vehicle !== currentVehicle) return -1;
+        if (a.vehicle !== currentVehicle && b.vehicle === currentVehicle) return 1;
+        return 0;
+      });
+
+      sortedDamages.forEach(d => {
+        const item = document.createElement('div');
+        item.className = 'damage-card-item';
+        item.setAttribute('data-severity', d.severity);
+
+        const fillVehicleName = d.vehicle === 'custom' ? 'Personalizado' : d.vehicle;
+        const vehicleIcons = { car: '🚗', moto: '🏍️', truck: '🚛', bus: '🚌', van: '🚐', custom: '➕' };
+        const viewLabels = {
+          'lateral-left': 'Lat. Esquerda',
+          'lateral-right': 'Lat. Direita',
+          'frontal': 'Frontal',
+          'traseira': 'Traseira'
+        };
+
+        const severityLabel = d.severity === 'low' ? 'Leve' : d.severity === 'medium' ? 'Média' : 'Severa';
+
+        item.innerHTML = `
+          <div class="damage-card-info">
+            <h4>${vehicleIcons[d.vehicle]} ${d.partName}</h4>
+            <p><strong>Avaria:</strong> ${d.typeName}</p>
+            <p style="font-size: 0.8rem; margin-top: 2px;">Perspectiva: ${viewLabels[d.view]}</p>
+            ${d.notes ? `<p style="font-size: 0.8rem; color: #cbd5e1; margin-top: 4px;">Obs: "${d.notes}"</p>` : ''}
+            <span class="badge ${d.severity}">${severityLabel}</span>
+          </div>
+          <button class="delete-btn" onclick="deleteDamage('${d.id}', '${d.partId}', '${d.partName}')" title="Remover avaria">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // ==================== LÓGICA DE EXPORTAÇÃO E COMPARTILHAMENTO ====================
+    
+    function generateReportText() {
+      const owner = document.getElementById('info-owner').value.trim() || 'Não informado';
+      const phone = document.getElementById('info-phone').value.trim() || 'Não informado';
+      const brand = document.getElementById('info-brand').value.trim() || 'Não informado';
+      const plate = document.getElementById('info-plate').value.trim() || 'Não informado';
+
+      const vehicleLabels = { car: '🚗 Automóvel', moto: '🏍️ Motocicleta', truck: '🚛 Caminhão', bus: '🚌 Ônibus', van: '🚐 Utilitário', custom: '➕ Veículo Customizado' };
+      const viewLabels = {
+        'lateral-left': 'Lateral Esquerda',
+        'lateral-right': 'Lateral Direita',
+        'frontal': 'Frontal',
+        'traseira': 'Traseira'
+      };
+
+      let text = `======================================\n`;
+      text += `       RELATÓRIO DE VISTORIA VEICULAR   \n`;
+      text += `======================================\n\n`;
+      text += `Proprietário: ${owner}\n`;
+      text += `Telefone: ${phone}\n`;
+      text += `Veículo/Modelo: ${brand}\n`;
+      text += `Placa: ${plate}\n`;
+      text += `Data/Hora: ${new Date().toLocaleString('pt-BR')}\n\n`;
+      text += `--------------------------------------\n`;
+      text += `AVARIAS CONSTATADAS:\n`;
+      text += `--------------------------------------\n`;
+
+      if (registeredDamages.length === 0) {
+        text += `Nenhuma avaria foi registrada para o veículo.\n`;
+      } else {
+        registeredDamages.forEach((d, index) => {
+          const typeName = d.typeName;
+          const severityLabel = d.severity === 'low' ? 'Leve' : d.severity === 'medium' ? 'Média' : 'Severa';
+          const vehicleText = vehicleLabels[d.vehicle] || d.vehicle;
+          
+          text += `${index + 1}. [${vehicleText}] - Peça: ${d.partName}\n`;
+          text += `   Avaria: ${typeName} (${severityLabel})\n`;
+          text += `   Perspectiva: ${viewLabels[d.view]}\n`;
+          if (d.notes) text += `   Observação: "${d.notes}"\n`;
+          text += `\n`;
+        });
+      }
+
+      const low = registeredDamages.filter(d => d.severity === 'low').length;
+      const medium = registeredDamages.filter(d => d.severity === 'medium').length;
+      const high = registeredDamages.filter(d => d.severity === 'high').length;
+
+      text += `--------------------------------------\n`;
+      text += `RESUMO DE GRAVIDADE:\n`;
+      text += `- Leves: ${low}\n`;
+      text += `- Médias: ${medium}\n`;
+      text += `- Severas: ${high}\n`;
+      text += `Total de Avarias: ${registeredDamages.length}\n`;
+      text += `======================================\n`;
+      
+      return text;
+    }
+
+    // Copiar relatório
+    function copyReport() {
+      const reportText = generateReportText();
+      navigator.clipboard.writeText(reportText).then(() => {
+        alert('Relatório de vistoria copiado para a área de transferência!');
+        speakText('Relatório copiado para a área de transferência.');
+      }).catch(err => {
+        console.error('Erro ao copiar: ', err);
+      });
+    }
+
+    // Baixar como Bloco de Notas (TXT)
+    function downloadTXT() {
+      const reportText = generateReportText();
+      const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      
+      const plate = document.getElementById('info-plate').value.trim() || 'Vistoria';
+      link.download = `Relatorio_Vistoria_${plate}.txt`;
+      
+      link.click();
+      speakText('Arquivo do Bloco de Notas baixado com sucesso.');
+    }
+
+    // Enviar via WhatsApp
+    function sendWhatsApp() {
+      const reportText = generateReportText();
+      let phone = document.getElementById('info-phone').value.trim();
+
+      // Limpar caracteres não numéricos do telefone
+      phone = phone.replace(/\D/g, '');
+
+      // Se não tiver DDD (mínimo 10 dígitos), ou estiver vazio, enviar sem número padrão
+      const baseUrl = 'https://api.whatsapp.com/send';
+      let fullUrl = `${baseUrl}?text=${encodeURIComponent(reportText)}`;
+      
+      if (phone.length >= 10) {
+        // Se não tiver o DDI do Brasil (55), adicionamos
+        if (phone.length === 10 || phone.length === 11) {
+          phone = '55' + phone;
+        }
+        fullUrl = `${baseUrl}?phone=${phone}&text=${encodeURIComponent(reportText)}`;
+      }
+
+      window.open(fullUrl, '_blank');
+      speakText('Direcionando para o WhatsApp.');
+    }
+  </script>
+</body>
+</html>
